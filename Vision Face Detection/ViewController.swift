@@ -135,29 +135,29 @@ extension ViewController {
                         let faceBoundingBox = boundingBox.scaled(to: self.view.bounds.size)
                         
                         //different types of landmarks
-                        let faceContour = observation.landmarks?.faceContour
-                        self.convertPointsForFace(faceContour, faceBoundingBox)
-                        
-                        let leftEye = observation.landmarks?.leftEye
-                        self.convertPointsForFace(leftEye, faceBoundingBox)
-                        
-                        let rightEye = observation.landmarks?.rightEye
-                        self.convertPointsForFace(rightEye, faceBoundingBox)
-                        
-                        let nose = observation.landmarks?.nose
-                        self.convertPointsForFace(nose, faceBoundingBox)
-                        
-                        let lips = observation.landmarks?.innerLips
-                        self.convertPointsForFace(lips, faceBoundingBox)
-                        
-                        let leftEyebrow = observation.landmarks?.leftEyebrow
-                        self.convertPointsForFace(leftEyebrow, faceBoundingBox)
-                        
-                        let rightEyebrow = observation.landmarks?.rightEyebrow
-                        self.convertPointsForFace(rightEyebrow, faceBoundingBox)
-                        
-                        let noseCrest = observation.landmarks?.noseCrest
-                        self.convertPointsForFace(noseCrest, faceBoundingBox)
+//                        let faceContour = observation.landmarks?.faceContour
+//                        self.convertPointsForFace(faceContour, faceBoundingBox)
+//
+//                        let leftEye = observation.landmarks?.leftEye
+//                        self.convertPointsForFace(leftEye, faceBoundingBox)
+//
+//                        let rightEye = observation.landmarks?.rightEye
+//                        self.convertPointsForFace(rightEye, faceBoundingBox)
+//
+//                        let nose = observation.landmarks?.nose
+//                        self.convertPointsForFace(nose, faceBoundingBox)
+//
+//                        let lips = observation.landmarks?.innerLips
+//                        self.convertPointsForFace(lips, faceBoundingBox)
+//
+//                        let leftEyebrow = observation.landmarks?.leftEyebrow
+//                        self.convertPointsForFace(leftEyebrow, faceBoundingBox)
+//
+//                        let rightEyebrow = observation.landmarks?.rightEyebrow
+//                        self.convertPointsForFace(rightEyebrow, faceBoundingBox)
+//
+//                        let noseCrest = observation.landmarks?.noseCrest
+//                        self.convertPointsForFace(noseCrest, faceBoundingBox)
                         
                         let outerLips = observation.landmarks?.outerLips
                         self.convertPointsForFace(outerLips, faceBoundingBox)
@@ -185,21 +185,21 @@ extension ViewController {
     }
     
     func draw(points: [(x: CGFloat, y: CGFloat)]) {
-        let newLayer = CAShapeLayer()
-        newLayer.strokeColor = UIColor.red.cgColor
-        newLayer.lineWidth = 2.0
-        
-        let path = UIBezierPath()
-        path.move(to: CGPoint(x: points[0].x, y: points[0].y))
-        for i in 0..<points.count - 1 {
-            let point = CGPoint(x: points[i].x, y: points[i].y)
-            path.addLine(to: point)
-            path.move(to: point)
-        }
-        path.addLine(to: CGPoint(x: points[0].x, y: points[0].y))
-        newLayer.path = path.cgPath
-        
-        //shapeLayer.addSublayer(newLayer)
+//        let newLayer = CAShapeLayer()
+//        newLayer.strokeColor = UIColor.red.cgColor
+//        newLayer.lineWidth = 2.0
+//
+//        let path = UIBezierPath()
+//        path.move(to: CGPoint(x: points[0].x, y: points[0].y))
+//        for i in 0..<points.count - 1 {
+//            let point = CGPoint(x: points[i].x, y: points[i].y)
+//            path.addLine(to: point)
+//            path.move(to: point)
+//        }
+//        path.addLine(to: CGPoint(x: points[0].x, y: points[0].y))
+//        newLayer.path = path.cgPath
+//
+//        shapeLayer.addSublayer(newLayer)
         
         let bbRect = getBoundingBox(points: points)
         let bbPath = UIBezierPath(rect: bbRect)
@@ -211,6 +211,37 @@ extension ViewController {
         bbLayer.path = bbPath.cgPath
         
         shapeLayer.addSublayer(bbLayer)
+        
+//        let drawingPointsRaw = [(x: 20, y: 72), (x: 95, y: 62), (x: 160, y: 47), (x: 192, y: 33)]
+        let drawingPointsRaw = [(x: 12, y: 56), (x: 46, y: 26), (x: 75, y: 16), (x: 88, y: 16), (x: 111, y: 31), (x: 124, y: 33), (x: 133, y: 26), (x: 143, y: 6), (x: 174, y: 0), (x: 189, y: 1), (x: 228, y: 12), (x: 255, y: 13), (x: 219, y: 66), (x: 205, y: 82), (x: 185, y: 98), (x: 137, y: 113), (x: 105, y: 116), (x: 68, y: 116), (x: 40, y: 106), (x: 8, y: 88), (x: 2, y: 81), (x: 0, y: 61), (x: 27, y: 48)]
+        let drawingFloatPoints = drawingPointsRaw.map { (x: Int, y: Int) -> (x: CGFloat, y: CGFloat) in
+            let pointX = CGFloat(Double(x)/255.0)
+            let pointY = CGFloat(Double(y)/255.0)
+            return (x: pointX, y: pointY)
+        }
+        
+        let drawingBb = getBoundingBox(points: drawingFloatPoints)
+        let drawingPoints = drawingFloatPoints.map { (x: CGFloat, y: CGFloat) -> (x: CGFloat, y: CGFloat) in
+            let pointX = x/drawingBb.width * bbRect.width + bbRect.origin.x
+            let pointY = y/drawingBb.height * bbRect.height + bbRect.origin.y
+            return (x: pointX, y: pointY)
+        }
+        
+        let drawingLayer = CAShapeLayer()
+        drawingLayer.strokeColor = UIColor.red.cgColor
+        drawingLayer.lineWidth = 2.0
+        
+        let drawingPath = UIBezierPath()
+        drawingPath.move(to: CGPoint(x: drawingPoints[0].x, y: drawingPoints[0].y))
+        for i in 0..<drawingPoints.count - 1 {
+            let drawingPoint = CGPoint(x: drawingPoints[i].x, y: drawingPoints[i].y)
+            drawingPath.addLine(to: drawingPoint)
+            drawingPath.move(to: drawingPoint)
+        }
+        drawingPath.addLine(to: CGPoint(x: drawingPoints[0].x, y: drawingPoints[0].y))
+        drawingLayer.path = drawingPath.cgPath
+        
+        shapeLayer.addSublayer(drawingLayer)
     }
     
     func getBoundingBox(points: [(x: CGFloat, y: CGFloat)]) -> CGRect {
