@@ -103,7 +103,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         let ciImage = CIImage(cvImageBuffer: pixelBuffer!, options: attachments as! [String : Any]?)
         
         //leftMirrored for front camera
-        let ciImageWithOrientation = ciImage.applyingOrientation(Int32(UIImageOrientation.leftMirrored.rawValue))
+        let ciImageWithOrientation = ciImage.oriented(forExifOrientation: Int32(UIImageOrientation.leftMirrored.rawValue))
         
         detectFace(on: ciImageWithOrientation)
     }
@@ -199,7 +199,41 @@ extension ViewController {
         path.addLine(to: CGPoint(x: points[0].x, y: points[0].y))
         newLayer.path = path.cgPath
         
-        shapeLayer.addSublayer(newLayer)
+        //shapeLayer.addSublayer(newLayer)
+        
+        let bbRect = getBoundingBox(points: points)
+        let bbPath = UIBezierPath(rect: bbRect)
+        let bbLayer = CAShapeLayer()
+        
+        bbLayer.fillColor = UIColor.clear.cgColor
+        bbLayer.strokeColor = UIColor.blue.cgColor
+        bbLayer.lineWidth = 2.0
+        bbLayer.path = bbPath.cgPath
+        
+        shapeLayer.addSublayer(bbLayer)
+    }
+    
+    func getBoundingBox(points: [(x: CGFloat, y: CGFloat)]) -> CGRect {
+        var minX = points.first!.x
+        var maxX = points.first!.x
+        var minY = points.first!.y
+        var maxY = points.first!.y
+        
+        for i in 0..<points.count - 1 {
+            if (points[i].x < minX) {
+                minX = points[i].x
+            }
+            if (points[i].x > maxX) {
+                maxX = points[i].x
+            }
+            if (points[i].y < minY) {
+                minY = points[i].y
+            }
+            if (points[i].y > maxY) {
+                maxY = points[i].y
+            }
+        }
+        return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
     }
     
     
