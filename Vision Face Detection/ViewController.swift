@@ -201,41 +201,50 @@ extension ViewController {
 //
 //        shapeLayer.addSublayer(newLayer)
         
-        let bbRect = getBoundingBox(points: points)
-        let bbPath = UIBezierPath(rect: bbRect)
-        let bbLayer = CAShapeLayer()
+        let featureBb = getBoundingBox(points: points)
+        let featureBbPath = UIBezierPath(rect: featureBb)
+        let featureBbLayer = CAShapeLayer()
         
-        bbLayer.fillColor = UIColor.clear.cgColor
-        bbLayer.strokeColor = UIColor.blue.cgColor
-        bbLayer.lineWidth = 2.0
-        bbLayer.path = bbPath.cgPath
+        featureBbLayer.fillColor = UIColor.clear.cgColor
+        featureBbLayer.strokeColor = UIColor.blue.cgColor
+        featureBbLayer.lineWidth = 2.0
+        featureBbLayer.path = featureBbPath.cgPath
         
-        shapeLayer.addSublayer(bbLayer)
+        shapeLayer.addSublayer(featureBbLayer)
         
         let drawingManager = DrawingManager()
         let feature = drawingManager.getFeature(type:FeatureType.Mouth)
-        var drawingPoints = feature.strokes.first!.points
+        let strokes = feature.strokes
         
-        let drawingBb = getBoundingBox(points: drawingPoints)
-        for index in drawingPoints.indices {
-            drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * bbRect.width + bbRect.origin.x
-            drawingPoints[index].y = drawingPoints[index].y/drawingBb.height * bbRect.height + bbRect.origin.y
+        var allDrawingPoints = [CGPoint]()
+        for stroke in strokes {
+            allDrawingPoints.append(contentsOf: stroke.points)
         }
+        let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        let drawingLayer = CAShapeLayer()
-        drawingLayer.strokeColor = UIColor.red.cgColor
-        drawingLayer.lineWidth = 2.0
-        
-        let drawingPath = UIBezierPath()
-        drawingPath.move(to: drawingPoints[0])
-        for drawingPoint in drawingPoints {
-            drawingPath.addLine(to: drawingPoint)
-            drawingPath.move(to: drawingPoint)
+        for stroke in strokes {
+            var drawingPoints = stroke.points
+            
+            for index in drawingPoints.indices {
+                drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * featureBb.width + featureBb.origin.x
+                drawingPoints[index].y = drawingPoints[index].y/drawingBb.height * featureBb.height + featureBb.origin.y
+            }
+            
+            let drawingLayer = CAShapeLayer()
+            drawingLayer.strokeColor = UIColor.red.cgColor
+            drawingLayer.lineWidth = 2.0
+            
+            let drawingPath = UIBezierPath()
+            drawingPath.move(to: drawingPoints[0])
+            for drawingPoint in drawingPoints {
+                drawingPath.addLine(to: drawingPoint)
+                drawingPath.move(to: drawingPoint)
+            }
+            drawingPath.addLine(to: drawingPoints[0])
+            drawingLayer.path = drawingPath.cgPath
+            
+            shapeLayer.addSublayer(drawingLayer)
         }
-        drawingPath.addLine(to: drawingPoints[0])
-        drawingLayer.path = drawingPath.cgPath
-        
-        shapeLayer.addSublayer(drawingLayer)
     }
     
     func getBoundingBox(points: [CGPoint]) -> CGRect {
