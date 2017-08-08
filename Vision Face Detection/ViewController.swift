@@ -140,7 +140,7 @@ extension ViewController {
 //                        let faceContour = observation.landmarks?.faceContour
 //                        self.convertPointsForFace(faceContour, faceBoundingBox)
 
-                        let eyeDrawing = drawingManager.getFeature(type: FeatureType.LeftEye)
+                        let eyeDrawing = drawingManager.getDrawing(type: FeatureType.LeftEye)
                         let leftEye = observation.landmarks?.leftEye
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
@@ -155,7 +155,7 @@ extension ViewController {
                             }
                         }
                         
-                        let noseDrawing = drawingManager.getFeature(type: FeatureType.Nose)
+                        let noseDrawing = drawingManager.getDrawing(type: FeatureType.Nose)
                         let nose = observation.landmarks?.nose
                         if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
                             DispatchQueue.main.async {
@@ -175,7 +175,7 @@ extension ViewController {
 //                        let noseCrest = observation.landmarks?.noseCrest
 //                        self.convertPointsForFace(noseCrest, faceBoundingBox)
                         
-                        let mouthDrawing = drawingManager.getFeature(type: FeatureType.Mouth)
+                        let mouthDrawing = drawingManager.getDrawing(type: FeatureType.Mouth)
                         let outerLips = observation.landmarks?.outerLips
                         if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
                             DispatchQueue.main.async {
@@ -202,7 +202,7 @@ extension ViewController {
         return nil
     }
     
-    func draw(featurePoints: [CGPoint], drawing: Feature) {
+    func draw(featurePoints: [CGPoint], drawing: Drawing) {
 //        let newLayer = CAShapeLayer()
 //        newLayer.strokeColor = UIColor.red.cgColor
 //        newLayer.lineWidth = 2.0
