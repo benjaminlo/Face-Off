@@ -12,8 +12,9 @@ class DrawingManager {
     
     func getFeature(type: FeatureType) -> Feature {
         let filename = getFeatureFile(type: type)
-        getFeatureFromFile(filename: filename)
-        return Feature()
+        let features = getFeaturesFromFile(filename: filename)
+        
+        return features!.first!
     }
     
     func getFeatureFile(type: FeatureType) -> String {
@@ -29,18 +30,30 @@ class DrawingManager {
         }
     }
     
-    func getFeatureFromFile(filename: String)
+    func getFeaturesFromFile(filename: String) -> [Feature]?
     {
         if let path = Bundle.main.path(forResource: filename, ofType: "json") {
             do {
                 let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
-                if let contents = json as? [String: Any] {
-                    // json is a dictionary
-                    print(contents)
-                } else if let contents = json as? [Any] {
-                    // json is an array
-                    print(contents)
+                if let contents = json as? [Any] {
+                    var features = [Feature]()
+                    for entry in contents {
+                        if let item = entry as? [String: Any], let drawing = item["drawing"] as? [Any] {
+                            var feature = Feature()
+                            for stroke in drawing {
+                                if let strokeComponents = stroke as? [Any], let xValues = strokeComponents[0] as? [Int], let yValues = strokeComponents[1] as? [Int] {
+                                    var newStroke = Stroke()
+                                    for (xValue, yValue) in zip(xValues, yValues) {
+                                        newStroke.points.append(CGPoint(x: xValue, y: yValue))
+                                    }
+                                    feature.strokes.append(newStroke)
+                                }
+                            }
+                            features.append(feature)
+                        }
+                    }
+                    return features
                 } else {
                     print("JSON is invalid")
                 }
@@ -50,6 +63,7 @@ class DrawingManager {
         } else {
             print("Invalid filename/path.")
         }
+        return nil
     }
 }
 
