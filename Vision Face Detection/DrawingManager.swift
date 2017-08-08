@@ -10,11 +10,12 @@ import CoreGraphics
 
 class DrawingManager {
     
-    func getDrawing(type: FeatureType) -> Drawing {
+    func getRandomDrawing(type: FeatureType) -> Drawing {
         let filename = getDrawingFile(type: type)
         let drawings = getDrawingsFromFile(filename: filename)
+        let randomIndex = Int(arc4random_uniform(UInt32(drawings!.count)))
         
-        return drawings!.first!
+        return drawings![randomIndex]
     }
     
     func getDrawingFile(type: FeatureType) -> String {
