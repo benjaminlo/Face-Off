@@ -12,6 +12,7 @@ class DrawingManager {
     
     func getFeature(type: FeatureType) -> Feature {
         let filename = getFeatureFile(type: type)
+        getFeatureFromFile(filename: filename)
         return Feature()
     }
     
@@ -25,6 +26,29 @@ class DrawingManager {
             return "mouth"
         case .Nose:
             return "nose"
+        }
+    }
+    
+    func getFeatureFromFile(filename: String)
+    {
+        if let path = Bundle.main.path(forResource: filename, ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                let json = try JSONSerialization.jsonObject(with: data, options: [])
+                if let contents = json as? [String: Any] {
+                    // json is a dictionary
+                    print(contents)
+                } else if let contents = json as? [Any] {
+                    // json is an array
+                    print(contents)
+                } else {
+                    print("JSON is invalid")
+                }
+            } catch let error {
+                print(error.localizedDescription)
+            }
+        } else {
+            print("Invalid filename/path.")
         }
     }
 }
