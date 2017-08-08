@@ -134,28 +134,32 @@ extension ViewController {
                     if let boundingBox = self.faceLandmarks.inputFaceObservations?.first?.boundingBox {
                         let faceBoundingBox = boundingBox.scaled(to: self.view.bounds.size)
                         
+                        let drawingManager = DrawingManager()
+                        
                         //different types of landmarks
 //                        let faceContour = observation.landmarks?.faceContour
 //                        self.convertPointsForFace(faceContour, faceBoundingBox)
 
+                        let eyeDrawing = drawingManager.getFeature(type: FeatureType.LeftEye)
                         let leftEye = observation.landmarks?.leftEye
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: leftEyePoints, type: FeatureType.LeftEye)
+                                self.draw(featurePoints: leftEyePoints, drawing: eyeDrawing)
                             }
                         }
 
                         let rightEye = observation.landmarks?.rightEye
                         if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: rightEyePoints, type: FeatureType.RightEye)
+                                self.draw(featurePoints: rightEyePoints, drawing: eyeDrawing)
                             }
                         }
                         
+                        let noseDrawing = drawingManager.getFeature(type: FeatureType.Nose)
                         let nose = observation.landmarks?.nose
                         if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: nosePoints, type: FeatureType.Nose)
+                                self.draw(featurePoints: nosePoints, drawing: noseDrawing)
                             }
                         }
 
@@ -171,10 +175,11 @@ extension ViewController {
 //                        let noseCrest = observation.landmarks?.noseCrest
 //                        self.convertPointsForFace(noseCrest, faceBoundingBox)
                         
+                        let mouthDrawing = drawingManager.getFeature(type: FeatureType.Mouth)
                         let outerLips = observation.landmarks?.outerLips
                         if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: outerLipsPoints, type: FeatureType.Mouth)
+                                self.draw(featurePoints: outerLipsPoints, drawing: mouthDrawing)
                             }
                         }
                     }
@@ -197,7 +202,7 @@ extension ViewController {
         return nil
     }
     
-    func draw(featurePoints: [CGPoint], type: FeatureType) {
+    func draw(featurePoints: [CGPoint], drawing: Feature) {
 //        let newLayer = CAShapeLayer()
 //        newLayer.strokeColor = UIColor.red.cgColor
 //        newLayer.lineWidth = 2.0
@@ -225,17 +230,13 @@ extension ViewController {
 //        
 //        shapeLayer.addSublayer(featureBbLayer)
         
-        let drawingManager = DrawingManager()
-        let feature = drawingManager.getFeature(type: type)
-        let strokes = feature.strokes
-        
         var allDrawingPoints = [CGPoint]()
-        for stroke in strokes {
+        for stroke in drawing.strokes {
             allDrawingPoints.append(contentsOf: stroke.points)
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        for stroke in strokes {
+        for stroke in drawing.strokes {
             var drawingPoints = stroke.points
             
             for index in drawingPoints.indices {
