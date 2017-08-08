@@ -9,16 +9,13 @@ import Foundation
 import CoreGraphics
 
 class DrawingManager {
+    static var drawings = [String : [Drawing]]()
     
-    func getRandomDrawing(type: FeatureType) -> Drawing {
-        let filename = getDrawingFile(type: type)
-        let drawings = getDrawingsFromFile(filename: filename)
-        let randomIndex = Int(arc4random_uniform(UInt32(drawings!.count)))
-        
-        return drawings![randomIndex]
+    static func loadDrawings(filename: String) {
+        drawings[filename] = getDrawingsFromFile(filename: filename)
     }
     
-    func getDrawingFile(type: FeatureType) -> String {
+    static func getDrawingFile(type: FeatureType) -> String {
         switch type {
         case .LeftEye, .RightEye:
             return "eye"
@@ -31,7 +28,7 @@ class DrawingManager {
         }
     }
     
-    func getDrawingsFromFile(filename: String) -> [Drawing]?
+    static func getDrawingsFromFile(filename: String) -> [Drawing]?
     {
         if let path = Bundle.main.path(forResource: filename, ofType: "json") {
             do {
@@ -65,6 +62,17 @@ class DrawingManager {
             print("Invalid filename/path.")
         }
         return nil
+    }
+    
+    func getRandomDrawing(type: FeatureType) -> Drawing {
+        let filename = DrawingManager.getDrawingFile(type: type)
+        if DrawingManager.drawings[filename] == nil {
+            DrawingManager.loadDrawings(filename: filename)
+        }
+        let drawings = DrawingManager.drawings[filename]
+        let randomIndex = Int(arc4random_uniform(UInt32(drawings!.count)))
+        
+        return drawings![randomIndex]
     }
 }
 

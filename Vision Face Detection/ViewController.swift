@@ -19,6 +19,8 @@ final class ViewController: UIViewController {
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
     
+    let drawingManager = DrawingManager()
+    
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
         
@@ -134,13 +136,11 @@ extension ViewController {
                     if let boundingBox = self.faceLandmarks.inputFaceObservations?.first?.boundingBox {
                         let faceBoundingBox = boundingBox.scaled(to: self.view.bounds.size)
                         
-                        let drawingManager = DrawingManager()
-                        
                         //different types of landmarks
 //                        let faceContour = observation.landmarks?.faceContour
 //                        self.convertPointsForFace(faceContour, faceBoundingBox)
 
-                        let eyeDrawing = drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
+                        let eyeDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
                         let leftEye = observation.landmarks?.leftEye
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
@@ -155,7 +155,7 @@ extension ViewController {
                             }
                         }
                         
-                        let noseDrawing = drawingManager.getRandomDrawing(type: FeatureType.Nose)
+                        let noseDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Nose)
                         let nose = observation.landmarks?.nose
                         if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
                             DispatchQueue.main.async {
@@ -175,7 +175,7 @@ extension ViewController {
 //                        let noseCrest = observation.landmarks?.noseCrest
 //                        self.convertPointsForFace(noseCrest, faceBoundingBox)
                         
-                        let mouthDrawing = drawingManager.getRandomDrawing(type: FeatureType.Mouth)
+                        let mouthDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Mouth)
                         let outerLips = observation.landmarks?.outerLips
                         if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
                             DispatchQueue.main.async {
