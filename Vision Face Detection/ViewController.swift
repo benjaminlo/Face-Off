@@ -171,11 +171,11 @@ extension ViewController {
         if let points = landmark?.points, let count = landmark?.pointCount {
             let convertedPoints = convert(points, with: count)
             
-            let faceLandmarkPoints = convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> (x: CGFloat, y: CGFloat) in
+            let faceLandmarkPoints = convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> CGPoint in
                 let pointX = point.x * boundingBox.width + boundingBox.origin.x
                 let pointY = point.y * boundingBox.height + boundingBox.origin.y
                 
-                return (x: pointX, y: pointY)
+                return CGPoint(x: pointX, y: pointY)
             }
             
             DispatchQueue.main.async {
@@ -184,7 +184,7 @@ extension ViewController {
         }
     }
     
-    func draw(points: [(x: CGFloat, y: CGFloat)]) {
+    func draw(points: [CGPoint]) {
 //        let newLayer = CAShapeLayer()
 //        newLayer.strokeColor = UIColor.red.cgColor
 //        newLayer.lineWidth = 2.0
@@ -212,19 +212,14 @@ extension ViewController {
         
         shapeLayer.addSublayer(bbLayer)
         
-//        let drawingPointsRaw = [(x: 20, y: 72), (x: 95, y: 62), (x: 160, y: 47), (x: 192, y: 33)]
-        let drawingPointsRaw = [(x: 12, y: 56), (x: 46, y: 26), (x: 75, y: 16), (x: 88, y: 16), (x: 111, y: 31), (x: 124, y: 33), (x: 133, y: 26), (x: 143, y: 6), (x: 174, y: 0), (x: 189, y: 1), (x: 228, y: 12), (x: 255, y: 13), (x: 219, y: 66), (x: 205, y: 82), (x: 185, y: 98), (x: 137, y: 113), (x: 105, y: 116), (x: 68, y: 116), (x: 40, y: 106), (x: 8, y: 88), (x: 2, y: 81), (x: 0, y: 61), (x: 27, y: 48)]
-        let drawingFloatPoints = drawingPointsRaw.map { (x: Int, y: Int) -> (x: CGFloat, y: CGFloat) in
-            let pointX = CGFloat(Double(x)/255.0)
-            let pointY = CGFloat(Double(y)/255.0)
-            return (x: pointX, y: pointY)
-        }
+        let drawingManager = DrawingManager()
+        let feature = drawingManager.getFeature(type:FeatureType.Mouth)
+        var drawingPoints = feature.strokes.first!.points
         
-        let drawingBb = getBoundingBox(points: drawingFloatPoints)
-        let drawingPoints = drawingFloatPoints.map { (x: CGFloat, y: CGFloat) -> (x: CGFloat, y: CGFloat) in
-            let pointX = x/drawingBb.width * bbRect.width + bbRect.origin.x
-            let pointY = y/drawingBb.height * bbRect.height + bbRect.origin.y
-            return (x: pointX, y: pointY)
+        let drawingBb = getBoundingBox(points: drawingPoints)
+        for index in drawingPoints.indices {
+            drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * bbRect.width + bbRect.origin.x
+            drawingPoints[index].y = drawingPoints[index].y/drawingBb.height * bbRect.height + bbRect.origin.y
         }
         
         let drawingLayer = CAShapeLayer()
@@ -232,19 +227,18 @@ extension ViewController {
         drawingLayer.lineWidth = 2.0
         
         let drawingPath = UIBezierPath()
-        drawingPath.move(to: CGPoint(x: drawingPoints[0].x, y: drawingPoints[0].y))
-        for i in 0..<drawingPoints.count - 1 {
-            let drawingPoint = CGPoint(x: drawingPoints[i].x, y: drawingPoints[i].y)
+        drawingPath.move(to: drawingPoints[0])
+        for drawingPoint in drawingPoints {
             drawingPath.addLine(to: drawingPoint)
             drawingPath.move(to: drawingPoint)
         }
-        drawingPath.addLine(to: CGPoint(x: drawingPoints[0].x, y: drawingPoints[0].y))
+        drawingPath.addLine(to: drawingPoints[0])
         drawingLayer.path = drawingPath.cgPath
         
         shapeLayer.addSublayer(drawingLayer)
     }
     
-    func getBoundingBox(points: [(x: CGFloat, y: CGFloat)]) -> CGRect {
+    func getBoundingBox(points: [CGPoint]) -> CGRect {
         var minX = points.first!.x
         var maxX = points.first!.x
         var minY = points.first!.y
@@ -266,7 +260,6 @@ extension ViewController {
         }
         return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
     }
-    
     
     func convert(_ points: UnsafePointer<vector_float2>, with count: Int) -> [(x: CGFloat, y: CGFloat)] {
         var convertedPoints = [(x: CGFloat, y: CGFloat)]()
