@@ -137,16 +137,28 @@ extension ViewController {
                         //different types of landmarks
 //                        let faceContour = observation.landmarks?.faceContour
 //                        self.convertPointsForFace(faceContour, faceBoundingBox)
-//
-//                        let leftEye = observation.landmarks?.leftEye
-//                        self.convertPointsForFace(leftEye, faceBoundingBox)
-//
-//                        let rightEye = observation.landmarks?.rightEye
-//                        self.convertPointsForFace(rightEye, faceBoundingBox)
-//
-//                        let nose = observation.landmarks?.nose
-//                        self.convertPointsForFace(nose, faceBoundingBox)
-//
+
+                        let leftEye = observation.landmarks?.leftEye
+                        if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.draw(featurePoints: leftEyePoints, type: FeatureType.LeftEye)
+                            }
+                        }
+
+                        let rightEye = observation.landmarks?.rightEye
+                        if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.draw(featurePoints: rightEyePoints, type: FeatureType.RightEye)
+                            }
+                        }
+                        
+                        let nose = observation.landmarks?.nose
+                        if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.draw(featurePoints: nosePoints, type: FeatureType.Nose)
+                            }
+                        }
+
 //                        let lips = observation.landmarks?.innerLips
 //                        self.convertPointsForFace(lips, faceBoundingBox)
 //
@@ -160,31 +172,32 @@ extension ViewController {
 //                        self.convertPointsForFace(noseCrest, faceBoundingBox)
                         
                         let outerLips = observation.landmarks?.outerLips
-                        self.convertPointsForFace(outerLips, faceBoundingBox)
+                        if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.draw(featurePoints: outerLipsPoints, type: FeatureType.Mouth)
+                            }
+                        }
                     }
                 }
             }
         }
     }
     
-    func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) {
+    func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) -> [CGPoint]? {
         if let points = landmark?.points, let count = landmark?.pointCount {
             let convertedPoints = convert(points, with: count)
             
-            let faceLandmarkPoints = convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> CGPoint in
+            return convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> CGPoint in
                 let pointX = point.x * boundingBox.width + boundingBox.origin.x
                 let pointY = point.y * boundingBox.height + boundingBox.origin.y
                 
                 return CGPoint(x: pointX, y: pointY)
             }
-            
-            DispatchQueue.main.async {
-                self.draw(points: faceLandmarkPoints)
-            }
         }
+        return nil
     }
     
-    func draw(points: [CGPoint]) {
+    func draw(featurePoints: [CGPoint], type: FeatureType) {
 //        let newLayer = CAShapeLayer()
 //        newLayer.strokeColor = UIColor.red.cgColor
 //        newLayer.lineWidth = 2.0
@@ -201,19 +214,19 @@ extension ViewController {
 //
 //        shapeLayer.addSublayer(newLayer)
         
-        let featureBb = getBoundingBox(points: points)
-        let featureBbPath = UIBezierPath(rect: featureBb)
-        let featureBbLayer = CAShapeLayer()
-        
-        featureBbLayer.fillColor = UIColor.clear.cgColor
-        featureBbLayer.strokeColor = UIColor.blue.cgColor
-        featureBbLayer.lineWidth = 2.0
-        featureBbLayer.path = featureBbPath.cgPath
-        
-        shapeLayer.addSublayer(featureBbLayer)
+        let featureBb = getBoundingBox(points: featurePoints)
+//        let featureBbPath = UIBezierPath(rect: featureBb)
+//        let featureBbLayer = CAShapeLayer()
+//        
+//        featureBbLayer.fillColor = UIColor.clear.cgColor
+//        featureBbLayer.strokeColor = UIColor.blue.cgColor
+//        featureBbLayer.lineWidth = 2.0
+//        featureBbLayer.path = featureBbPath.cgPath
+//        
+//        shapeLayer.addSublayer(featureBbLayer)
         
         let drawingManager = DrawingManager()
-        let feature = drawingManager.getFeature(type:FeatureType.Mouth)
+        let feature = drawingManager.getFeature(type: type)
         let strokes = feature.strokes
         
         var allDrawingPoints = [CGPoint]()
