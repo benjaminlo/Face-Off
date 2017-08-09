@@ -157,6 +157,13 @@ extension ViewController {
                                 self.drawFeature(featurePoints: rightEyebrowPoints)
                             }
                         }
+                        
+                        let earDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEar)
+                        if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.drawEars(faceContourPoints: faceContourPoints, drawing: earDrawing)
+                            }
+                        }
 
                         let eyeDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
                         let leftEye = observation.landmarks?.leftEye
@@ -194,6 +201,98 @@ extension ViewController {
         }
     }
     
+    func drawEars(faceContourPoints: [CGPoint], drawing: Drawing) {
+        let faceContourBb = getBoundingBox(points: faceContourPoints)
+        let featureBbPath = UIBezierPath(rect: faceContourBb)
+        let featureBbLayer = CAShapeLayer()
+        
+        featureBbLayer.fillColor = UIColor.clear.cgColor
+        featureBbLayer.strokeColor = UIColor.blue.cgColor
+        featureBbLayer.lineWidth = 2.0
+        featureBbLayer.path = featureBbPath.cgPath
+        
+        shapeLayer.addSublayer(featureBbLayer)
+        
+        let earWidth = faceContourBb.width/5
+        let earHeight = faceContourBb.height/2
+        
+        let leftEarBb = CGRect(x: faceContourPoints[faceContourPoints.count - 2].x, y: faceContourPoints[faceContourPoints.count - 2].y - earHeight, width: earWidth, height: earHeight)
+        let leftEarBbPath = UIBezierPath(rect: leftEarBb)
+        let leftEarBbLayer = CAShapeLayer()
+        
+        leftEarBbLayer.fillColor = UIColor.clear.cgColor
+        leftEarBbLayer.strokeColor = UIColor.green.cgColor
+        leftEarBbLayer.lineWidth = 2.0
+        leftEarBbLayer.path = leftEarBbPath.cgPath
+        
+        shapeLayer.addSublayer(leftEarBbLayer)
+        
+        let rightEarBb = CGRect(x: faceContourPoints[0].x - earWidth, y: faceContourPoints[0].y - earHeight, width: earWidth, height: earHeight)
+        let rightEarBbPath = UIBezierPath(rect: rightEarBb)
+        let rightEarBbLayer = CAShapeLayer()
+        
+        rightEarBbLayer.fillColor = UIColor.clear.cgColor
+        rightEarBbLayer.strokeColor = UIColor.green.cgColor
+        rightEarBbLayer.lineWidth = 2.0
+        rightEarBbLayer.path = rightEarBbPath.cgPath
+        
+        shapeLayer.addSublayer(rightEarBbLayer)
+        
+        var allDrawingPoints = [CGPoint]()
+        for stroke in drawing.strokes {
+            allDrawingPoints.append(contentsOf: stroke.points)
+        }
+        let drawingBb = getBoundingBox(points: allDrawingPoints)
+        
+        for stroke in drawing.strokes {
+            var drawingPoints = stroke.points
+            
+            for index in drawingPoints.indices {
+                drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * earWidth + leftEarBb.origin.x
+                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * earHeight + leftEarBb.origin.y
+            }
+            
+            let drawingLayer = CAShapeLayer()
+            drawingLayer.strokeColor = UIColor.red.cgColor
+            drawingLayer.lineWidth = 2.0
+            
+            let drawingPath = UIBezierPath()
+            drawingPath.move(to: drawingPoints[0])
+            for i in 0..<drawingPoints.count - 1 {
+                drawingPath.addLine(to: drawingPoints[i])
+                drawingPath.move(to: drawingPoints[i])
+            }
+            drawingPath.addLine(to: drawingPoints[0])
+            drawingLayer.path = drawingPath.cgPath
+            
+            shapeLayer.addSublayer(drawingLayer)
+        }
+        
+        for stroke in drawing.strokes {
+            var drawingPoints = stroke.points
+            
+            for index in drawingPoints.indices {
+                drawingPoints[index].x = (1 - drawingPoints[index].x/drawingBb.width) * earWidth + rightEarBb.origin.x
+                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * earHeight + rightEarBb.origin.y
+            }
+            
+            let drawingLayer = CAShapeLayer()
+            drawingLayer.strokeColor = UIColor.red.cgColor
+            drawingLayer.lineWidth = 2.0
+            
+            let drawingPath = UIBezierPath()
+            drawingPath.move(to: drawingPoints[0])
+            for i in 0..<drawingPoints.count - 1 {
+                drawingPath.addLine(to: drawingPoints[i])
+                drawingPath.move(to: drawingPoints[i])
+            }
+            drawingPath.addLine(to: drawingPoints[0])
+            drawingLayer.path = drawingPath.cgPath
+            
+            shapeLayer.addSublayer(drawingLayer)
+        }
+    }
+    
     func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) -> [CGPoint]? {
         if let points = landmark?.points, let count = landmark?.pointCount {
             let convertedPoints = convert(points, with: count)
@@ -225,7 +324,6 @@ extension ViewController {
     }
     
     func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
-        
         let featureBb = getBoundingBox(points: featurePoints)
         if (showFeatureBb) {
             let featureBbPath = UIBezierPath(rect: featureBb)
