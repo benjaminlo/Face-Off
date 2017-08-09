@@ -144,14 +144,14 @@ extension ViewController {
                         let leftEye = observation.landmarks?.leftEye
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: leftEyePoints, drawing: eyeDrawing)
+                                self.drawDrawing(featurePoints: leftEyePoints, drawing: eyeDrawing)
                             }
                         }
 
                         let rightEye = observation.landmarks?.rightEye
                         if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: rightEyePoints, drawing: eyeDrawing)
+                                self.drawDrawing(featurePoints: rightEyePoints, drawing: eyeDrawing)
                             }
                         }
                         
@@ -159,7 +159,7 @@ extension ViewController {
                         let nose = observation.landmarks?.nose
                         if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: nosePoints, drawing: noseDrawing)
+                                self.drawDrawing(featurePoints: nosePoints, drawing: noseDrawing)
                             }
                         }
 
@@ -179,7 +179,7 @@ extension ViewController {
                         let outerLips = observation.landmarks?.outerLips
                         if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.draw(featurePoints: outerLipsPoints, drawing: mouthDrawing)
+                                self.drawDrawing(featurePoints: outerLipsPoints, drawing: mouthDrawing)
                             }
                         }
                     }
@@ -202,33 +202,36 @@ extension ViewController {
         return nil
     }
     
-    func draw(featurePoints: [CGPoint], drawing: Drawing) {
-//        let newLayer = CAShapeLayer()
-//        newLayer.strokeColor = UIColor.red.cgColor
-//        newLayer.lineWidth = 2.0
-//
-//        let path = UIBezierPath()
-//        path.move(to: CGPoint(x: points[0].x, y: points[0].y))
-//        for i in 0..<points.count - 1 {
-//            let point = CGPoint(x: points[i].x, y: points[i].y)
-//            path.addLine(to: point)
-//            path.move(to: point)
-//        }
-//        path.addLine(to: CGPoint(x: points[0].x, y: points[0].y))
-//        newLayer.path = path.cgPath
-//
-//        shapeLayer.addSublayer(newLayer)
+    func drawFeature(featurePoints: [CGPoint]) {
+        let newLayer = CAShapeLayer()
+        newLayer.strokeColor = UIColor.red.cgColor
+        newLayer.lineWidth = 2.0
+
+        let path = UIBezierPath()
+        path.move(to: featurePoints[0])
+        for i in 0..<featurePoints.count - 1 {
+            path.addLine(to: featurePoints[i])
+            path.move(to: featurePoints[i])
+        }
+        newLayer.path = path.cgPath
+
+        shapeLayer.addSublayer(newLayer)
+    }
+    
+    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
         
         let featureBb = getBoundingBox(points: featurePoints)
-//        let featureBbPath = UIBezierPath(rect: featureBb)
-//        let featureBbLayer = CAShapeLayer()
-//        
-//        featureBbLayer.fillColor = UIColor.clear.cgColor
-//        featureBbLayer.strokeColor = UIColor.blue.cgColor
-//        featureBbLayer.lineWidth = 2.0
-//        featureBbLayer.path = featureBbPath.cgPath
-//        
-//        shapeLayer.addSublayer(featureBbLayer)
+        if (showFeatureBb) {
+            let featureBbPath = UIBezierPath(rect: featureBb)
+            let featureBbLayer = CAShapeLayer()
+            
+            featureBbLayer.fillColor = UIColor.clear.cgColor
+            featureBbLayer.strokeColor = UIColor.blue.cgColor
+            featureBbLayer.lineWidth = 2.0
+            featureBbLayer.path = featureBbPath.cgPath
+            
+            shapeLayer.addSublayer(featureBbLayer)
+        }
         
         var allDrawingPoints = [CGPoint]()
         for stroke in drawing.strokes {
