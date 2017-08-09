@@ -173,7 +173,7 @@ extension ViewController {
                         let rightEye = observation.landmarks?.rightEye
                         if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawDrawing(featurePoints: rightEyePoints, drawing: eyeDrawing)
+                                self.drawDrawing(featurePoints: rightEyePoints, drawing: eyeDrawing, horizontalFlip: true)
                             }
                         }
                         
@@ -244,12 +244,12 @@ extension ViewController {
         return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
     }
     
-    func createDrawingLayer(strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0) {
+    func createDrawingLayer(strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false) {
         for stroke in strokes {
             var drawingPoints = stroke.points
             
             for index in drawingPoints.indices {
-                drawingPoints[index].x = (1 - drawingPoints[index].x/drawingBb.width) * featureWidth + featureBb.origin.x
+                drawingPoints[index].x = (horizontalFlip ? 1 - drawingPoints[index].x/drawingBb.width : drawingPoints[index].x/drawingBb.width) * featureWidth + featureBb.origin.x
                 drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * featureHeight + featureBb.origin.y
             }
             
@@ -292,7 +292,7 @@ extension ViewController {
         shapeLayer.addSublayer(newLayer)
     }
     
-    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
+    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, horizontalFlip: Bool = false, showFeatureBb: Bool = false) {
         let featureBb = getBoundingBox(points: featurePoints)
         if (showFeatureBb) {
             let featureBbPath = UIBezierPath(rect: featureBb)
@@ -312,7 +312,7 @@ extension ViewController {
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height)
+        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, horizontalFlip: horizontalFlip)
     }
     
     func drawEars(faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
@@ -360,6 +360,6 @@ extension ViewController {
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
         createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: leftEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle)
-        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: rightEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle)
+        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: rightEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle, horizontalFlip: true)
     }
 }
