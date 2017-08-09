@@ -96,7 +96,6 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-        
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
@@ -109,11 +108,9 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         detectFace(on: ciImageWithOrientation)
     }
-        
 }
 
 extension ViewController {
-    
     func detectFace(on image: CIImage) {
         try? faceDetectionRequest.perform([faceDetection], on: image)
         if let results = faceDetection.results as? [VNFaceObservation] {
@@ -201,6 +198,123 @@ extension ViewController {
         }
     }
     
+    func convert(_ points: UnsafePointer<vector_float2>, with count: Int) -> [(x: CGFloat, y: CGFloat)] {
+        var convertedPoints = [(x: CGFloat, y: CGFloat)]()
+        for i in 0...count {
+            convertedPoints.append((CGFloat(points[i].x), CGFloat(points[i].y)))
+        }
+        
+        return convertedPoints
+    }
+    
+    func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) -> [CGPoint]? {
+        if let points = landmark?.points, let count = landmark?.pointCount {
+            let convertedPoints = convert(points, with: count)
+            
+            return convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> CGPoint in
+                let pointX = point.x * boundingBox.width + boundingBox.origin.x
+                let pointY = point.y * boundingBox.height + boundingBox.origin.y
+                
+                return CGPoint(x: pointX, y: pointY)
+            }
+        }
+        return nil
+    }
+    
+    func getBoundingBox(points: [CGPoint]) -> CGRect {
+        var minX = points[0].x
+        var maxX = points[0].x
+        var minY = points[0].y
+        var maxY = points[0].y
+        
+        for i in 0..<points.count - 1 {
+            if (points[i].x < minX) {
+                minX = points[i].x
+            }
+            if (points[i].x > maxX) {
+                maxX = points[i].x
+            }
+            if (points[i].y < minY) {
+                minY = points[i].y
+            }
+            if (points[i].y > maxY) {
+                maxY = points[i].y
+            }
+        }
+        return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
+    }
+    
+    func createDrawingLayer(strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0) {
+        for stroke in strokes {
+            var drawingPoints = stroke.points
+            
+            for index in drawingPoints.indices {
+                drawingPoints[index].x = (1 - drawingPoints[index].x/drawingBb.width) * featureWidth + featureBb.origin.x
+                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * featureHeight + featureBb.origin.y
+            }
+            
+            let drawingPath = UIBezierPath()
+            drawingPath.move(to: drawingPoints[0])
+            for i in 0..<drawingPoints.count - 1 {
+                drawingPath.addLine(to: drawingPoints[i])
+                drawingPath.move(to: drawingPoints[i])
+            }
+            drawingPath.addLine(to: drawingPoints[0])
+            
+            if (rotationAngle != 0) {
+                drawingPath.apply(CGAffineTransform(translationX: -featureBb.midX, y: -featureBb.midY))
+                drawingPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+                drawingPath.apply(CGAffineTransform(translationX: featureBb.midX, y: featureBb.midY))
+            }
+            
+            let drawingLayer = CAShapeLayer()
+            drawingLayer.strokeColor = UIColor.red.cgColor
+            drawingLayer.lineWidth = 2.0
+            drawingLayer.path = drawingPath.cgPath
+            
+            shapeLayer.addSublayer(drawingLayer)
+        }
+    }
+    
+    func drawFeature(featurePoints: [CGPoint]) {
+        let newLayer = CAShapeLayer()
+        newLayer.strokeColor = UIColor.red.cgColor
+        newLayer.lineWidth = 2.0
+
+        let path = UIBezierPath()
+        path.move(to: featurePoints[0])
+        for i in 0..<featurePoints.count - 1 {
+            path.addLine(to: featurePoints[i])
+            path.move(to: featurePoints[i])
+        }
+        newLayer.path = path.cgPath
+
+        shapeLayer.addSublayer(newLayer)
+    }
+    
+    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
+        let featureBb = getBoundingBox(points: featurePoints)
+        if (showFeatureBb) {
+            let featureBbPath = UIBezierPath(rect: featureBb)
+            let featureBbLayer = CAShapeLayer()
+            
+            featureBbLayer.fillColor = UIColor.clear.cgColor
+            featureBbLayer.strokeColor = UIColor.blue.cgColor
+            featureBbLayer.lineWidth = 2.0
+            featureBbLayer.path = featureBbPath.cgPath
+            
+            shapeLayer.addSublayer(featureBbLayer)
+        }
+        
+        var allDrawingPoints = [CGPoint]()
+        for stroke in drawing.strokes {
+            allDrawingPoints.append(contentsOf: stroke.points)
+        }
+        let drawingBb = getBoundingBox(points: allDrawingPoints)
+        
+        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height)
+    }
+    
     func drawEars(faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
         let faceContourBb = getBoundingBox(points: faceContourPoints)
         let earWidth = faceContourBb.width/5
@@ -245,169 +359,7 @@ extension ViewController {
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        for stroke in drawing.strokes {
-            var drawingPoints = stroke.points
-            
-            for index in drawingPoints.indices {
-                drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * earWidth + leftEarBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * earHeight + leftEarBb.origin.y
-            }
-            
-            let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
-            drawingLayer.lineWidth = 2.0
-            
-            let drawingPath = UIBezierPath()
-            drawingPath.move(to: drawingPoints[0])
-            for i in 0..<drawingPoints.count - 1 {
-                drawingPath.addLine(to: drawingPoints[i])
-                drawingPath.move(to: drawingPoints[i])
-            }
-            drawingPath.addLine(to: drawingPoints[0])
-            
-            drawingPath.apply(CGAffineTransform(translationX: -leftEarBb.midX, y: -leftEarBb.midY))
-            drawingPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
-            drawingPath.apply(CGAffineTransform(translationX: leftEarBb.midX, y: leftEarBb.midY))
-            
-            drawingLayer.path = drawingPath.cgPath
-            
-            shapeLayer.addSublayer(drawingLayer)
-        }
-        
-        for stroke in drawing.strokes {
-            var drawingPoints = stroke.points
-            
-            for index in drawingPoints.indices {
-                drawingPoints[index].x = (1 - drawingPoints[index].x/drawingBb.width) * earWidth + rightEarBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * earHeight + rightEarBb.origin.y
-            }
-            
-            let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
-            drawingLayer.lineWidth = 2.0
-            
-            let drawingPath = UIBezierPath()
-            drawingPath.move(to: drawingPoints[0])
-            for i in 0..<drawingPoints.count - 1 {
-                drawingPath.addLine(to: drawingPoints[i])
-                drawingPath.move(to: drawingPoints[i])
-            }
-            drawingPath.addLine(to: drawingPoints[0])
-            
-            drawingPath.apply(CGAffineTransform(translationX: -rightEarBb.midX, y: -rightEarBb.midY))
-            drawingPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
-            drawingPath.apply(CGAffineTransform(translationX: rightEarBb.midX, y: rightEarBb.midY))
-            
-            drawingLayer.path = drawingPath.cgPath
-            
-            shapeLayer.addSublayer(drawingLayer)
-        }
-    }
-    
-    func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) -> [CGPoint]? {
-        if let points = landmark?.points, let count = landmark?.pointCount {
-            let convertedPoints = convert(points, with: count)
-            
-            return convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> CGPoint in
-                let pointX = point.x * boundingBox.width + boundingBox.origin.x
-                let pointY = point.y * boundingBox.height + boundingBox.origin.y
-                
-                return CGPoint(x: pointX, y: pointY)
-            }
-        }
-        return nil
-    }
-    
-    func drawFeature(featurePoints: [CGPoint]) {
-        let newLayer = CAShapeLayer()
-        newLayer.strokeColor = UIColor.red.cgColor
-        newLayer.lineWidth = 2.0
-
-        let path = UIBezierPath()
-        path.move(to: featurePoints[0])
-        for i in 0..<featurePoints.count - 1 {
-            path.addLine(to: featurePoints[i])
-            path.move(to: featurePoints[i])
-        }
-        newLayer.path = path.cgPath
-
-        shapeLayer.addSublayer(newLayer)
-    }
-    
-    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
-        let featureBb = getBoundingBox(points: featurePoints)
-        if (showFeatureBb) {
-            let featureBbPath = UIBezierPath(rect: featureBb)
-            let featureBbLayer = CAShapeLayer()
-            
-            featureBbLayer.fillColor = UIColor.clear.cgColor
-            featureBbLayer.strokeColor = UIColor.blue.cgColor
-            featureBbLayer.lineWidth = 2.0
-            featureBbLayer.path = featureBbPath.cgPath
-            
-            shapeLayer.addSublayer(featureBbLayer)
-        }
-        
-        var allDrawingPoints = [CGPoint]()
-        for stroke in drawing.strokes {
-            allDrawingPoints.append(contentsOf: stroke.points)
-        }
-        let drawingBb = getBoundingBox(points: allDrawingPoints)
-        
-        for stroke in drawing.strokes {
-            var drawingPoints = stroke.points
-            
-            for index in drawingPoints.indices {
-                drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * featureBb.width + featureBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * featureBb.height + featureBb.origin.y
-            }
-            
-            let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
-            drawingLayer.lineWidth = 2.0
-            
-            let drawingPath = UIBezierPath()
-            drawingPath.move(to: drawingPoints[0])
-            for i in 0..<drawingPoints.count - 1 {
-                drawingPath.addLine(to: drawingPoints[i])
-                drawingPath.move(to: drawingPoints[i])
-            }
-            drawingPath.addLine(to: drawingPoints[0])
-            drawingLayer.path = drawingPath.cgPath
-            
-            shapeLayer.addSublayer(drawingLayer)
-        }
-    }
-    
-    func getBoundingBox(points: [CGPoint]) -> CGRect {
-        var minX = points[0].x
-        var maxX = points[0].x
-        var minY = points[0].y
-        var maxY = points[0].y
-        
-        for i in 0..<points.count - 1 {
-            if (points[i].x < minX) {
-                minX = points[i].x
-            }
-            if (points[i].x > maxX) {
-                maxX = points[i].x
-            }
-            if (points[i].y < minY) {
-                minY = points[i].y
-            }
-            if (points[i].y > maxY) {
-                maxY = points[i].y
-            }
-        }
-        return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
-    }
-    
-    func convert(_ points: UnsafePointer<vector_float2>, with count: Int) -> [(x: CGFloat, y: CGFloat)] {
-        var convertedPoints = [(x: CGFloat, y: CGFloat)]()
-        for i in 0...count {
-            convertedPoints.append((CGFloat(points[i].x), CGFloat(points[i].y)))
-        }
-        
-        return convertedPoints
+        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: leftEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle)
+        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: rightEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle)
     }
 }
