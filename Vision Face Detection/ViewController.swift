@@ -241,7 +241,7 @@ extension ViewController {
             
             for index in drawingPoints.indices {
                 drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * featureBb.width + featureBb.origin.x
-                drawingPoints[index].y = drawingPoints[index].y/drawingBb.height * featureBb.height + featureBb.origin.y
+                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * featureBb.height + featureBb.origin.y
             }
             
             let drawingLayer = CAShapeLayer()
