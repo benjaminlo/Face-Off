@@ -51,7 +51,7 @@ final class ViewController: UIViewController {
         super.viewDidAppear(animated)
         guard let previewLayer = previewLayer else { return }
         
-        view.layer.addSublayer(previewLayer)
+//        view.layer.addSublayer(previewLayer)
         
         shapeLayer.strokeColor = UIColor.red.cgColor
         shapeLayer.lineWidth = 2.0
@@ -137,8 +137,26 @@ extension ViewController {
                         let faceBoundingBox = boundingBox.scaled(to: self.view.bounds.size)
                         
                         //different types of landmarks
-//                        let faceContour = observation.landmarks?.faceContour
-//                        self.convertPointsForFace(faceContour, faceBoundingBox)
+                        let faceContour = observation.landmarks?.faceContour
+                        if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.drawFeature(featurePoints: faceContourPoints)
+                            }
+                        }
+                        
+                        let leftEyebrow = observation.landmarks?.leftEyebrow
+                        if let leftEyebrowPoints = self.convertPointsForFace(leftEyebrow, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.drawFeature(featurePoints: leftEyebrowPoints)
+                            }
+                        }
+                        
+                        let rightEyebrow = observation.landmarks?.rightEyebrow
+                        if let rightEyebrowPoints = self.convertPointsForFace(rightEyebrow, faceBoundingBox) {
+                            DispatchQueue.main.async {
+                                self.drawFeature(featurePoints: rightEyebrowPoints)
+                            }
+                        }
 
                         let eyeDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
                         let leftEye = observation.landmarks?.leftEye
@@ -162,18 +180,6 @@ extension ViewController {
                                 self.drawDrawing(featurePoints: nosePoints, drawing: noseDrawing)
                             }
                         }
-
-//                        let lips = observation.landmarks?.innerLips
-//                        self.convertPointsForFace(lips, faceBoundingBox)
-//
-//                        let leftEyebrow = observation.landmarks?.leftEyebrow
-//                        self.convertPointsForFace(leftEyebrow, faceBoundingBox)
-//
-//                        let rightEyebrow = observation.landmarks?.rightEyebrow
-//                        self.convertPointsForFace(rightEyebrow, faceBoundingBox)
-//
-//                        let noseCrest = observation.landmarks?.noseCrest
-//                        self.convertPointsForFace(noseCrest, faceBoundingBox)
                         
                         let mouthDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Mouth)
                         let outerLips = observation.landmarks?.outerLips
