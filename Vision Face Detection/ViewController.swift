@@ -215,10 +215,15 @@ extension ViewController {
         
         let earWidth = faceContourBb.width/5
         let earHeight = faceContourBb.height/2
+        let rotationAngle = atan((faceContourPoints[faceContourPoints.count - 2].y - faceContourPoints[0].y)/faceContourBb.width)
         
         let leftEarBb = CGRect(x: faceContourPoints[faceContourPoints.count - 2].x, y: faceContourPoints[faceContourPoints.count - 2].y - earHeight, width: earWidth, height: earHeight)
         let leftEarBbPath = UIBezierPath(rect: leftEarBb)
         let leftEarBbLayer = CAShapeLayer()
+        
+        leftEarBbPath.apply(CGAffineTransform(translationX: -leftEarBb.midX, y: -leftEarBb.midY))
+        leftEarBbPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+        leftEarBbPath.apply(CGAffineTransform(translationX: leftEarBb.midX, y: leftEarBb.midY))
         
         leftEarBbLayer.fillColor = UIColor.clear.cgColor
         leftEarBbLayer.strokeColor = UIColor.green.cgColor
@@ -230,6 +235,10 @@ extension ViewController {
         let rightEarBb = CGRect(x: faceContourPoints[0].x - earWidth, y: faceContourPoints[0].y - earHeight, width: earWidth, height: earHeight)
         let rightEarBbPath = UIBezierPath(rect: rightEarBb)
         let rightEarBbLayer = CAShapeLayer()
+        
+        rightEarBbPath.apply(CGAffineTransform(translationX: -rightEarBb.midX, y: -rightEarBb.midY))
+        rightEarBbPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+        rightEarBbPath.apply(CGAffineTransform(translationX: rightEarBb.midX, y: rightEarBb.midY))
         
         rightEarBbLayer.fillColor = UIColor.clear.cgColor
         rightEarBbLayer.strokeColor = UIColor.green.cgColor
@@ -263,6 +272,11 @@ extension ViewController {
                 drawingPath.move(to: drawingPoints[i])
             }
             drawingPath.addLine(to: drawingPoints[0])
+            
+            drawingPath.apply(CGAffineTransform(translationX: -leftEarBb.midX, y: -leftEarBb.midY))
+            drawingPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+            drawingPath.apply(CGAffineTransform(translationX: leftEarBb.midX, y: leftEarBb.midY))
+            
             drawingLayer.path = drawingPath.cgPath
             
             shapeLayer.addSublayer(drawingLayer)
@@ -287,6 +301,11 @@ extension ViewController {
                 drawingPath.move(to: drawingPoints[i])
             }
             drawingPath.addLine(to: drawingPoints[0])
+            
+            drawingPath.apply(CGAffineTransform(translationX: -rightEarBb.midX, y: -rightEarBb.midY))
+            drawingPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+            drawingPath.apply(CGAffineTransform(translationX: rightEarBb.midX, y: rightEarBb.midY))
+            
             drawingLayer.path = drawingPath.cgPath
             
             shapeLayer.addSublayer(drawingLayer)
