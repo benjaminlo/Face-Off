@@ -250,9 +250,9 @@ extension ViewController {
             
             let drawingPath = UIBezierPath()
             drawingPath.move(to: drawingPoints[0])
-            for drawingPoint in drawingPoints {
-                drawingPath.addLine(to: drawingPoint)
-                drawingPath.move(to: drawingPoint)
+            for i in 0..<drawingPoints.count - 1 {
+                drawingPath.addLine(to: drawingPoints[i])
+                drawingPath.move(to: drawingPoints[i])
             }
             drawingPath.addLine(to: drawingPoints[0])
             drawingLayer.path = drawingPath.cgPath
