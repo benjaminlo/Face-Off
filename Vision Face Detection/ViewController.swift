@@ -244,13 +244,13 @@ extension ViewController {
         return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
     }
     
-    func createDrawingLayer(strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false) {
+    func createDrawingLayer(strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false, verticalFlip: Bool = false) {
         for stroke in strokes {
             var drawingPoints = stroke.points
             
             for index in drawingPoints.indices {
                 drawingPoints[index].x = (horizontalFlip ? 1 - drawingPoints[index].x/drawingBb.width : drawingPoints[index].x/drawingBb.width) * featureWidth + featureBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * featureHeight + featureBb.origin.y
+                drawingPoints[index].y = (verticalFlip ? drawingPoints[index].y/drawingBb.height : 1 - drawingPoints[index].y/drawingBb.height) * featureHeight + featureBb.origin.y
             }
             
             let drawingPath = UIBezierPath()
@@ -292,7 +292,7 @@ extension ViewController {
         shapeLayer.addSublayer(newLayer)
     }
     
-    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, horizontalFlip: Bool = false, showFeatureBb: Bool = false) {
+    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, horizontalFlip: Bool = false, verticalFlip: Bool = false, showFeatureBb: Bool = false) {
         let featureBb = getBoundingBox(points: featurePoints)
         if (showFeatureBb) {
             let featureBbPath = UIBezierPath(rect: featureBb)
@@ -312,7 +312,7 @@ extension ViewController {
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, horizontalFlip: horizontalFlip)
+        createDrawingLayer(strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, horizontalFlip: horizontalFlip, verticalFlip: verticalFlip)
     }
     
     func drawEars(faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
