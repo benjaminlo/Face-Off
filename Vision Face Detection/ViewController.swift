@@ -271,10 +271,10 @@ extension ViewController {
     }
     
     func getBoundingBox(points: [CGPoint]) -> CGRect {
-        var minX = points.first!.x
-        var maxX = points.first!.x
-        var minY = points.first!.y
-        var maxY = points.first!.y
+        var minX = points[0].x
+        var maxX = points[0].x
+        var minY = points[0].y
+        var maxY = points[0].y
         
         for i in 0..<points.count - 1 {
             if (points[i].x < minX) {
