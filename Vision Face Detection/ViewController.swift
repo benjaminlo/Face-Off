@@ -201,51 +201,43 @@ extension ViewController {
         }
     }
     
-    func drawEars(faceContourPoints: [CGPoint], drawing: Drawing) {
+    func drawEars(faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
         let faceContourBb = getBoundingBox(points: faceContourPoints)
-        let featureBbPath = UIBezierPath(rect: faceContourBb)
-        let featureBbLayer = CAShapeLayer()
-        
-        featureBbLayer.fillColor = UIColor.clear.cgColor
-        featureBbLayer.strokeColor = UIColor.blue.cgColor
-        featureBbLayer.lineWidth = 2.0
-        featureBbLayer.path = featureBbPath.cgPath
-        
-        shapeLayer.addSublayer(featureBbLayer)
-        
         let earWidth = faceContourBb.width/5
         let earHeight = faceContourBb.height/2
         let rotationAngle = atan((faceContourPoints[faceContourPoints.count - 2].y - faceContourPoints[0].y)/faceContourBb.width)
-        
         let leftEarBb = CGRect(x: faceContourPoints[faceContourPoints.count - 2].x, y: faceContourPoints[faceContourPoints.count - 2].y - earHeight, width: earWidth, height: earHeight)
-        let leftEarBbPath = UIBezierPath(rect: leftEarBb)
-        let leftEarBbLayer = CAShapeLayer()
-        
-        leftEarBbPath.apply(CGAffineTransform(translationX: -leftEarBb.midX, y: -leftEarBb.midY))
-        leftEarBbPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
-        leftEarBbPath.apply(CGAffineTransform(translationX: leftEarBb.midX, y: leftEarBb.midY))
-        
-        leftEarBbLayer.fillColor = UIColor.clear.cgColor
-        leftEarBbLayer.strokeColor = UIColor.green.cgColor
-        leftEarBbLayer.lineWidth = 2.0
-        leftEarBbLayer.path = leftEarBbPath.cgPath
-        
-        shapeLayer.addSublayer(leftEarBbLayer)
-        
         let rightEarBb = CGRect(x: faceContourPoints[0].x - earWidth, y: faceContourPoints[0].y - earHeight, width: earWidth, height: earHeight)
-        let rightEarBbPath = UIBezierPath(rect: rightEarBb)
-        let rightEarBbLayer = CAShapeLayer()
         
-        rightEarBbPath.apply(CGAffineTransform(translationX: -rightEarBb.midX, y: -rightEarBb.midY))
-        rightEarBbPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
-        rightEarBbPath.apply(CGAffineTransform(translationX: rightEarBb.midX, y: rightEarBb.midY))
-        
-        rightEarBbLayer.fillColor = UIColor.clear.cgColor
-        rightEarBbLayer.strokeColor = UIColor.green.cgColor
-        rightEarBbLayer.lineWidth = 2.0
-        rightEarBbLayer.path = rightEarBbPath.cgPath
-        
-        shapeLayer.addSublayer(rightEarBbLayer)
+        if (showFeatureBb) {
+            let leftEarBbPath = UIBezierPath(rect: leftEarBb)
+            let leftEarBbLayer = CAShapeLayer()
+            
+            leftEarBbPath.apply(CGAffineTransform(translationX: -leftEarBb.midX, y: -leftEarBb.midY))
+            leftEarBbPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+            leftEarBbPath.apply(CGAffineTransform(translationX: leftEarBb.midX, y: leftEarBb.midY))
+            
+            leftEarBbLayer.fillColor = UIColor.clear.cgColor
+            leftEarBbLayer.strokeColor = UIColor.blue.cgColor
+            leftEarBbLayer.lineWidth = 2.0
+            leftEarBbLayer.path = leftEarBbPath.cgPath
+            
+            shapeLayer.addSublayer(leftEarBbLayer)
+            
+            let rightEarBbPath = UIBezierPath(rect: rightEarBb)
+            let rightEarBbLayer = CAShapeLayer()
+            
+            rightEarBbPath.apply(CGAffineTransform(translationX: -rightEarBb.midX, y: -rightEarBb.midY))
+            rightEarBbPath.apply(CGAffineTransform(rotationAngle: rotationAngle))
+            rightEarBbPath.apply(CGAffineTransform(translationX: rightEarBb.midX, y: rightEarBb.midY))
+            
+            rightEarBbLayer.fillColor = UIColor.clear.cgColor
+            rightEarBbLayer.strokeColor = UIColor.blue.cgColor
+            rightEarBbLayer.lineWidth = 2.0
+            rightEarBbLayer.path = rightEarBbPath.cgPath
+            
+            shapeLayer.addSublayer(rightEarBbLayer)
+        }
         
         var allDrawingPoints = [CGPoint]()
         for stroke in drawing.strokes {
