@@ -141,14 +141,14 @@ extension ViewController {
                             }
                         }
                         
-                        let leftEyebrow = observation.landmarks?.leftEyebrow
+                        let leftEyebrow = observation.landmarks?.rightEyebrow // flipped for vision
                         if let leftEyebrowPoints = self.convertPointsForFace(leftEyebrow, faceBoundingBox) {
                             DispatchQueue.main.async {
                                 self.drawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: leftEyebrowPoints)
                             }
                         }
                         
-                        let rightEyebrow = observation.landmarks?.rightEyebrow
+                        let rightEyebrow = observation.landmarks?.leftEyebrow // flipped for vision
                         if let rightEyebrowPoints = self.convertPointsForFace(rightEyebrow, faceBoundingBox) {
                             DispatchQueue.main.async {
                                 self.drawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: rightEyebrowPoints)
@@ -163,14 +163,14 @@ extension ViewController {
                         }
 
                         let eyeDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
-                        let leftEye = observation.landmarks?.leftEye
+                        let leftEye = observation.landmarks?.rightEye // flipped for vision
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
                                 self.drawingManager.drawDrawing(shapeLayer: self.shapeLayer,featurePoints: leftEyePoints, drawing: eyeDrawing)
                             }
                         }
 
-                        let rightEye = observation.landmarks?.rightEye
+                        let rightEye = observation.landmarks?.leftEye // flipped for vision
                         if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
                                 self.drawingManager.drawDrawing(shapeLayer: self.shapeLayer,featurePoints: rightEyePoints, drawing: eyeDrawing, horizontalFlip: true)
