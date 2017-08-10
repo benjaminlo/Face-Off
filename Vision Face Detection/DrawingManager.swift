@@ -18,7 +18,7 @@ class DrawingManager {
     }
     
     static func getDrawingFile(type: FeatureType) -> String {
-        var file: String
+        var file = String()
         
         switch type {
         case .LeftEye:
@@ -44,6 +44,8 @@ class DrawingManager {
             break
         case .Nose:
             file = "nose"
+            break
+        default:
             break
         }
         
@@ -120,7 +122,7 @@ class DrawingManager {
         return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
     }
     
-    static func createDrawingLayer(shapeLayer: CAShapeLayer, strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false, verticalFlip: Bool = false) {
+    static func createDrawingLayer(shapeLayer: CAShapeLayer, strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, color: UIColor = UIColor.black, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false, verticalFlip: Bool = false) {
         for stroke in strokes {
             var drawingPoints = stroke.points
             
@@ -144,7 +146,7 @@ class DrawingManager {
             }
             
             let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
+            drawingLayer.strokeColor = color.cgColor
             drawingLayer.lineWidth = 2.0
             drawingLayer.path = drawingPath.cgPath
             
@@ -152,9 +154,10 @@ class DrawingManager {
         }
     }
     
-    static func drawFeature(shapeLayer: CAShapeLayer, featurePoints: [CGPoint]) {
+    static func drawFeature(ofType featureType: FeatureType, withPoints featurePoints: [CGPoint], onLayer shapeLayer: CAShapeLayer) {
+        let color = faceCustomization.getColor(type: featureType)
         let newLayer = CAShapeLayer()
-        newLayer.strokeColor = UIColor.red.cgColor
+        newLayer.strokeColor = color.cgColor
         newLayer.lineWidth = 2.0
         
         let path = UIBezierPath()
@@ -168,7 +171,9 @@ class DrawingManager {
         shapeLayer.addSublayer(newLayer)
     }
     
-    static func drawDrawing(shapeLayer: CAShapeLayer, featureType: FeatureType, featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
+    static func drawDrawing(ofType featureType: FeatureType, withPoints featurePoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {
+        let drawing = getRandomDrawing(type: featureType)
+        let color = faceCustomization.getColor(type: featureType)
         let verticalFlip = featureType == FeatureType.Mouth && (faceCustomization.emotion == Emotion.Angry || faceCustomization.emotion == Emotion.Sad)
         let horizontalFlip = featureType == FeatureType.RightEar || featureType == FeatureType.RightEye
         
@@ -178,7 +183,7 @@ class DrawingManager {
             let featureBbLayer = CAShapeLayer()
             
             featureBbLayer.fillColor = UIColor.clear.cgColor
-            featureBbLayer.strokeColor = UIColor.blue.cgColor
+            featureBbLayer.strokeColor = color.cgColor
             featureBbLayer.lineWidth = 2.0
             featureBbLayer.path = featureBbPath.cgPath
             
@@ -191,10 +196,12 @@ class DrawingManager {
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, horizontalFlip: horizontalFlip, verticalFlip: verticalFlip)
+        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, color: color, horizontalFlip: horizontalFlip, verticalFlip: verticalFlip)
     }
     
-    static func drawEars(shapeLayer: CAShapeLayer, faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
+    static func drawEars(withPoints faceContourPoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {
+        let drawing = getRandomDrawing(type: FeatureType.LeftEar)
+        let color = faceCustomization.getColor(type: FeatureType.LeftEar)
         let faceContourBb = getBoundingBox(points: faceContourPoints)
         let earWidth = faceContourBb.width/5
         let earHeight = faceContourBb.height/2
@@ -211,7 +218,7 @@ class DrawingManager {
             leftEarBbPath.apply(CGAffineTransform(translationX: leftEarBb.midX, y: leftEarBb.midY))
             
             leftEarBbLayer.fillColor = UIColor.clear.cgColor
-            leftEarBbLayer.strokeColor = UIColor.blue.cgColor
+            leftEarBbLayer.strokeColor = color.cgColor
             leftEarBbLayer.lineWidth = 2.0
             leftEarBbLayer.path = leftEarBbPath.cgPath
             
@@ -225,7 +232,7 @@ class DrawingManager {
             rightEarBbPath.apply(CGAffineTransform(translationX: rightEarBb.midX, y: rightEarBb.midY))
             
             rightEarBbLayer.fillColor = UIColor.clear.cgColor
-            rightEarBbLayer.strokeColor = UIColor.blue.cgColor
+            rightEarBbLayer.strokeColor = color.cgColor
             rightEarBbLayer.lineWidth = 2.0
             rightEarBbLayer.path = rightEarBbPath.cgPath
             
@@ -238,8 +245,8 @@ class DrawingManager {
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: leftEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle)
-        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: rightEarBb, featureWidth: earWidth, featureHeight: earHeight, rotationAngle: rotationAngle, horizontalFlip: true)
+        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: leftEarBb, featureWidth: earWidth, featureHeight: earHeight, color: color, rotationAngle: rotationAngle)
+        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: rightEarBb, featureWidth: earWidth, featureHeight: earHeight, color: color, rotationAngle: rotationAngle, horizontalFlip: true)
     }
 }
 
@@ -250,6 +257,8 @@ enum FeatureType {
     case Mouth
     case LeftEar
     case RightEar
+    case FaceContour
+    case Eyebrow
 }
 
 enum Emotion {
@@ -259,15 +268,32 @@ enum Emotion {
     case Angry
 }
 
-struct FaceCustomization {
-    var emotion: Emotion
-    var leftEyeClosed: Bool
-    var rightEyeClosed: Bool
+class FaceCustomization {
+    var emotion = Emotion.Neutral
+    var leftEyeClosed = false
+    var rightEyeClosed = false
+    var eyeColor = UIColor.black
+    var noseColor = UIColor.black
+    var mouthColor = UIColor.black
+    var earColor = UIColor.black
+    var faceContourColor = UIColor.black
+    var eyebrowColor = UIColor.black
     
-    init(emotion: Emotion = Emotion.Neutral, leftEyeClosed: Bool = false, rightEyeClosed: Bool = false) {
-        self.emotion = emotion
-        self.leftEyeClosed = leftEyeClosed
-        self.rightEyeClosed = rightEyeClosed
+    func getColor(type: FeatureType) -> UIColor {
+        switch(type) {
+        case .LeftEye, .RightEye:
+            return eyeColor
+        case .Nose:
+            return noseColor
+        case .Mouth:
+            return mouthColor
+        case .LeftEar, .RightEar:
+            return earColor
+        case .FaceContour:
+            return faceContourColor
+        case .Eyebrow:
+            return eyebrowColor
+        }
     }
 }
 
