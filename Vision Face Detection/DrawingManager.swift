@@ -10,6 +10,7 @@ import CoreGraphics
 import UIKit
 
 class DrawingManager {
+    static var faceCustomization = FaceCustomization()
     static var drawings = [String : [Drawing]]()
     
     static func loadDrawings(filename: String) {
@@ -17,16 +18,36 @@ class DrawingManager {
     }
     
     static func getDrawingFile(type: FeatureType) -> String {
+        var file: String
+        
         switch type {
-        case .LeftEye, .RightEye:
-            return "eye"
+        case .LeftEye:
+            file = "eye"
+            if (faceCustomization.leftEyeClosed) {
+                file.append("-closed")
+            }
+            break
+        case .RightEye:
+            file = "eye"
+            if (faceCustomization.rightEyeClosed) {
+                file.append("-closed")
+            }
+            break
         case .LeftEar, .RightEar:
-            return "ear"
+            file = "ear"
+            break
         case .Mouth:
-            return "mouth"
+            file = "mouth"
+            if (faceCustomization.emotion != Emotion.Neutral) {
+                file.append("-happy-sad-angry")
+            }
+            break
         case .Nose:
-            return "nose"
+            file = "nose"
+            break
         }
+        
+        return file
     }
     
     static func getDrawingsFromFile(filename: String) -> [Drawing]?
@@ -65,7 +86,7 @@ class DrawingManager {
         return nil
     }
     
-    func getRandomDrawing(type: FeatureType) -> Drawing {
+    static func getRandomDrawing(type: FeatureType) -> Drawing {
         let filename = DrawingManager.getDrawingFile(type: type)
         if DrawingManager.drawings[filename] == nil {
             DrawingManager.loadDrawings(filename: filename)
@@ -76,7 +97,7 @@ class DrawingManager {
         return drawings![randomIndex]
     }
     
-    func getBoundingBox(points: [CGPoint]) -> CGRect {
+    static func getBoundingBox(points: [CGPoint]) -> CGRect {
         var minX = points[0].x
         var maxX = points[0].x
         var minY = points[0].y
@@ -99,7 +120,7 @@ class DrawingManager {
         return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
     }
     
-    func createDrawingLayer(shapeLayer: CAShapeLayer, strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false, verticalFlip: Bool = false) {
+    static func createDrawingLayer(shapeLayer: CAShapeLayer, strokes: [Stroke], drawingBb: CGRect, featureBb: CGRect, featureWidth: CGFloat, featureHeight: CGFloat, rotationAngle: CGFloat = 0, horizontalFlip: Bool = false, verticalFlip: Bool = false) {
         for stroke in strokes {
             var drawingPoints = stroke.points
             
@@ -131,7 +152,7 @@ class DrawingManager {
         }
     }
     
-    func drawFeature(shapeLayer: CAShapeLayer, featurePoints: [CGPoint]) {
+    static func drawFeature(shapeLayer: CAShapeLayer, featurePoints: [CGPoint]) {
         let newLayer = CAShapeLayer()
         newLayer.strokeColor = UIColor.red.cgColor
         newLayer.lineWidth = 2.0
@@ -147,7 +168,10 @@ class DrawingManager {
         shapeLayer.addSublayer(newLayer)
     }
     
-    func drawDrawing(shapeLayer: CAShapeLayer, featurePoints: [CGPoint], drawing: Drawing, horizontalFlip: Bool = false, verticalFlip: Bool = false, showFeatureBb: Bool = false) {
+    static func drawDrawing(shapeLayer: CAShapeLayer, featureType: FeatureType, featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
+        let verticalFlip = featureType == FeatureType.Mouth && (faceCustomization.emotion == Emotion.Angry || faceCustomization.emotion == Emotion.Sad)
+        let horizontalFlip = featureType == FeatureType.RightEar || featureType == FeatureType.RightEye
+        
         let featureBb = getBoundingBox(points: featurePoints)
         if (showFeatureBb) {
             let featureBbPath = UIBezierPath(rect: featureBb)
@@ -170,7 +194,7 @@ class DrawingManager {
         createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, horizontalFlip: horizontalFlip, verticalFlip: verticalFlip)
     }
     
-    func drawEars(shapeLayer: CAShapeLayer, faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
+    static func drawEars(shapeLayer: CAShapeLayer, faceContourPoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
         let faceContourBb = getBoundingBox(points: faceContourPoints)
         let earWidth = faceContourBb.width/5
         let earHeight = faceContourBb.height/2
@@ -226,6 +250,25 @@ enum FeatureType {
     case Mouth
     case LeftEar
     case RightEar
+}
+
+enum Emotion {
+    case Neutral
+    case Happy
+    case Sad
+    case Angry
+}
+
+struct FaceCustomization {
+    var emotion: Emotion
+    var leftEyeClosed: Bool
+    var rightEyeClosed: Bool
+    
+    init(emotion: Emotion = Emotion.Neutral, leftEyeClosed: Bool = false, rightEyeClosed: Bool = false) {
+        self.emotion = emotion
+        self.leftEyeClosed = leftEyeClosed
+        self.rightEyeClosed = rightEyeClosed
+    }
 }
 
 struct Drawing {

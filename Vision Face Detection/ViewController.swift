@@ -19,8 +19,6 @@ final class ViewController: UIViewController {
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
     
-    let drawingManager = DrawingManager()
-    
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
         
@@ -137,59 +135,65 @@ extension ViewController {
                         let faceContour = observation.landmarks?.faceContour
                         if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: faceContourPoints)
+                                DrawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: faceContourPoints)
                             }
                         }
                         
                         let leftEyebrow = observation.landmarks?.rightEyebrow // flipped for vision
                         if let leftEyebrowPoints = self.convertPointsForFace(leftEyebrow, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: leftEyebrowPoints)
+                                DrawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: leftEyebrowPoints)
                             }
                         }
                         
                         let rightEyebrow = observation.landmarks?.leftEyebrow // flipped for vision
                         if let rightEyebrowPoints = self.convertPointsForFace(rightEyebrow, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: rightEyebrowPoints)
+                                DrawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: rightEyebrowPoints)
                             }
                         }
                         
-                        let earDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEar)
+                        let earDrawing = DrawingManager.getRandomDrawing(type: FeatureType.LeftEar)
                         if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawEars(shapeLayer: self.shapeLayer,faceContourPoints: faceContourPoints, drawing: earDrawing)
+                                DrawingManager.drawEars(shapeLayer: self.shapeLayer, faceContourPoints: faceContourPoints, drawing: earDrawing)
                             }
                         }
 
-                        let eyeDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
+                        let leftEyeDrawing = DrawingManager.getRandomDrawing(type: FeatureType.LeftEye)
                         let leftEye = observation.landmarks?.rightEye // flipped for vision
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawDrawing(shapeLayer: self.shapeLayer,featurePoints: leftEyePoints, drawing: eyeDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.LeftEye, featurePoints: leftEyePoints, drawing: leftEyeDrawing)
                             }
                         }
 
+                        let rightEyeDrawing: Drawing
+                        if (DrawingManager.faceCustomization.leftEyeClosed != DrawingManager.faceCustomization.rightEyeClosed) {
+                            rightEyeDrawing = DrawingManager.getRandomDrawing(type: FeatureType.RightEye)
+                        } else {
+                            rightEyeDrawing = leftEyeDrawing
+                        }
                         let rightEye = observation.landmarks?.leftEye // flipped for vision
                         if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawDrawing(shapeLayer: self.shapeLayer,featurePoints: rightEyePoints, drawing: eyeDrawing, horizontalFlip: true)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.RightEye, featurePoints: rightEyePoints, drawing: rightEyeDrawing)
                             }
                         }
                         
-                        let noseDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Nose)
+                        let noseDrawing = DrawingManager.getRandomDrawing(type: FeatureType.Nose)
                         let nose = observation.landmarks?.nose
                         if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawDrawing(shapeLayer: self.shapeLayer,featurePoints: nosePoints, drawing: noseDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.Nose, featurePoints: nosePoints, drawing: noseDrawing)
                             }
                         }
                         
-                        let mouthDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Mouth)
+                        let mouthDrawing = DrawingManager.getRandomDrawing(type: FeatureType.Mouth)
                         let outerLips = observation.landmarks?.outerLips
                         if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawingManager.drawDrawing(shapeLayer: self.shapeLayer,featurePoints: outerLipsPoints, drawing: mouthDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.Mouth, featurePoints: outerLipsPoints, drawing: mouthDrawing)
                             }
                         }
                     }
