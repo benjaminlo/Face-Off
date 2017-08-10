@@ -121,6 +121,10 @@ extension ViewController {
                 faceLandmarks.inputFaceObservations = results
                 detectLandmarks(on: image)
                 
+                let bb = results[0].boundingBox
+                let cropped = image.cropped(to: bb.scaled(to:image.extent.size))
+                classifyEmotion(on: UIImage(ciImage: cropped))
+                
                 DispatchQueue.main.async {
                     self.shapeLayer.sublayers?.removeAll()
                 }
@@ -129,6 +133,7 @@ extension ViewController {
     }
     
     func detectLandmarks(on image: CIImage) {
+        
         try? faceLandmarksDetectionRequest.perform([faceLandmarks], on: image)
         if let landmarksResults = faceLandmarks.results as? [VNFaceObservation] {
             for observation in landmarksResults {
@@ -307,6 +312,54 @@ extension ViewController {
         return nil
     }
     
+    func classifyEmotion(on image: UIImage) {
+        let mlArray = convertImage(image: image)
+
+        let model = FaceOff9()
+        do {
+            let output = try model.prediction(input1: mlArray!)
+            print (output.classLabel)
+        }
+        catch {
+            print("Error info: \(error)")
+        }
+    }
+    
+
+    
+    func convertImage(image:UIImage) -> MLMultiArray? {
+        let size = CGSize(width:48, height:48)
+        
+        guard let pixels = image.resize(to: size).pixelData() else {
+            return nil;
+        }
+        
+        guard let array = try? MLMultiArray(shape: [1, 48, 48], dataType: .double) else {
+            return nil
+        }
+        
+        let r = pixels.enumerated().filter { $0.offset % 4 == 0 }.map { $0.element }
+        let g = pixels.enumerated().filter { $0.offset % 4 == 1 }.map { $0.element }
+        let b = pixels.enumerated().filter { $0.offset % 4 == 2 }.map { $0.element }
+        
+        var gray = [Double]()
+        for i in 0..<r.count {
+            let dr = Double(r[i]) * 0.3
+            let dg = Double(g[i]) * 0.59
+            let db = Double(b[i]) * 0.11
+            let temp =  dr + dg + db
+
+            gray.append(temp)
+        }
+        for (index, element) in gray.enumerated() {
+            array[index] = NSNumber(value: element)
+        }
+        //print(gray)
+        
+        return array
+    }
+        
+        
     func drawFeature(featurePoints: [CGPoint]) {
         let newLayer = CAShapeLayer()
         newLayer.strokeColor = UIColor.red.cgColor

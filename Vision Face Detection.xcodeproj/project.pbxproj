@@ -12,6 +12,12 @@
 		8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6081F39A09F00EEFCD7 /* eye.json */; };
 		8996C60B1F39A0E600EEFCD7 /* mouth.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6051F39A09F00EEFCD7 /* mouth.json */; };
 		8996C60C1F39A0E900EEFCD7 /* nose.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6071F39A09F00EEFCD7 /* nose.json */; };
+		955B06271F3AED5D00663C24 /* UIImage+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B06261F3AED5D00663C24 /* UIImage+Util.swift */; };
+		955B06351F3B28A500663C24 /* FaceOff5.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 955B06341F3B28A500663C24 /* FaceOff5.mlmodel */; };
+		955B06371F3B2A6300663C24 /* FaceOff6.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 955B06361F3B2A6300663C24 /* FaceOff6.mlmodel */; };
+		95D4EC721F3B43B7004C3EB3 /* FaceOff7.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC711F3B43B7004C3EB3 /* FaceOff7.mlmodel */; };
+		95D4EC741F3C06D7004C3EB3 /* FaceOff8.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC731F3C06D7004C3EB3 /* FaceOff8.mlmodel */; };
+		95D4EC761F3C328A004C3EB3 /* FaceOff9.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */; };
 		E56B7E711EFD261E006704F3 /* CGRect+Scaled.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */; };
 		E5E2CD531EFA419000EBCCBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */; };
 		E5E2CD551EFA419000EBCCBF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E2CD541EFA419000EBCCBF /* ViewController.swift */; };
@@ -26,6 +32,12 @@
 		8996C6061F39A09F00EEFCD7 /* ear.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ear.json; sourceTree = "<group>"; };
 		8996C6071F39A09F00EEFCD7 /* nose.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = nose.json; sourceTree = "<group>"; };
 		8996C6081F39A09F00EEFCD7 /* eye.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eye.json; sourceTree = "<group>"; };
+		955B06261F3AED5D00663C24 /* UIImage+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Util.swift"; sourceTree = "<group>"; };
+		955B06341F3B28A500663C24 /* FaceOff5.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff5.mlmodel; sourceTree = "<group>"; };
+		955B06361F3B2A6300663C24 /* FaceOff6.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff6.mlmodel; sourceTree = "<group>"; };
+		95D4EC711F3B43B7004C3EB3 /* FaceOff7.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff7.mlmodel; sourceTree = "<group>"; };
+		95D4EC731F3C06D7004C3EB3 /* FaceOff8.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff8.mlmodel; sourceTree = "<group>"; };
+		95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff9.mlmodel; sourceTree = "<group>"; };
 		E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Scaled.swift"; sourceTree = "<group>"; };
 		E5E2CD4F1EFA419000EBCCBF /* Vision Face Detection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vision Face Detection.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +78,11 @@
 		E5E2CD511EFA419000EBCCBF /* Vision Face Detection */ = {
 			isa = PBXGroup;
 			children = (
+				95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */,
+				95D4EC731F3C06D7004C3EB3 /* FaceOff8.mlmodel */,
+				95D4EC711F3B43B7004C3EB3 /* FaceOff7.mlmodel */,
+				955B06361F3B2A6300663C24 /* FaceOff6.mlmodel */,
+				955B06341F3B28A500663C24 /* FaceOff5.mlmodel */,
 				8996C6061F39A09F00EEFCD7 /* ear.json */,
 				8996C6081F39A09F00EEFCD7 /* eye.json */,
 				8996C6051F39A09F00EEFCD7 /* mouth.json */,
@@ -78,6 +95,7 @@
 				E5E2CD591EFA419000EBCCBF /* Assets.xcassets */,
 				E5E2CD5B1EFA419000EBCCBF /* LaunchScreen.storyboard */,
 				E5E2CD5E1EFA419000EBCCBF /* Info.plist */,
+				955B06261F3AED5D00663C24 /* UIImage+Util.swift */,
 			);
 			path = "Vision Face Detection";
 			sourceTree = "<group>";
@@ -158,9 +176,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				E56B7E711EFD261E006704F3 /* CGRect+Scaled.swift in Sources */,
+				95D4EC721F3B43B7004C3EB3 /* FaceOff7.mlmodel in Sources */,
 				E5E2CD551EFA419000EBCCBF /* ViewController.swift in Sources */,
 				8996C6001F38668C00EEFCD7 /* DrawingManager.swift in Sources */,
+				95D4EC741F3C06D7004C3EB3 /* FaceOff8.mlmodel in Sources */,
 				E5E2CD531EFA419000EBCCBF /* AppDelegate.swift in Sources */,
+				955B06371F3B2A6300663C24 /* FaceOff6.mlmodel in Sources */,
+				955B06271F3AED5D00663C24 /* UIImage+Util.swift in Sources */,
+				955B06351F3B28A500663C24 /* FaceOff5.mlmodel in Sources */,
+				95D4EC761F3C328A004C3EB3 /* FaceOff9.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
