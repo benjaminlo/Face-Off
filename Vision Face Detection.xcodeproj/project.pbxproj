@@ -12,6 +12,9 @@
 		8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6081F39A09F00EEFCD7 /* eye.json */; };
 		8996C60B1F39A0E600EEFCD7 /* mouth.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6051F39A09F00EEFCD7 /* mouth.json */; };
 		8996C60C1F39A0E900EEFCD7 /* nose.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6071F39A09F00EEFCD7 /* nose.json */; };
+		89FDF80F1F3B503500668DC1 /* mouth-neutral.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF80C1F3B502900668DC1 /* mouth-neutral.json */; };
+		89FDF8111F3B541700668DC1 /* mouth-happy-sad-angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */; };
+		89FDF8191F3BF3C000668DC1 /* eye-closed.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF8141F3BF3AF00668DC1 /* eye-closed.json */; };
 		E56B7E711EFD261E006704F3 /* CGRect+Scaled.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */; };
 		E5E2CD531EFA419000EBCCBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */; };
 		E5E2CD551EFA419000EBCCBF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E2CD541EFA419000EBCCBF /* ViewController.swift */; };
@@ -26,6 +29,9 @@
 		8996C6061F39A09F00EEFCD7 /* ear.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ear.json; sourceTree = "<group>"; };
 		8996C6071F39A09F00EEFCD7 /* nose.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = nose.json; sourceTree = "<group>"; };
 		8996C6081F39A09F00EEFCD7 /* eye.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eye.json; sourceTree = "<group>"; };
+		89FDF80C1F3B502900668DC1 /* mouth-neutral.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-neutral.json"; sourceTree = "<group>"; };
+		89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-happy-sad-angry.json"; sourceTree = "<group>"; };
+		89FDF8141F3BF3AF00668DC1 /* eye-closed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "eye-closed.json"; sourceTree = "<group>"; };
 		E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Scaled.swift"; sourceTree = "<group>"; };
 		E5E2CD4F1EFA419000EBCCBF /* Vision Face Detection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vision Face Detection.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -67,9 +73,12 @@
 			isa = PBXGroup;
 			children = (
 				8996C6061F39A09F00EEFCD7 /* ear.json */,
+				89FDF8141F3BF3AF00668DC1 /* eye-closed.json */,
 				8996C6081F39A09F00EEFCD7 /* eye.json */,
 				8996C6051F39A09F00EEFCD7 /* mouth.json */,
 				8996C6071F39A09F00EEFCD7 /* nose.json */,
+				89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */,
+				89FDF80C1F3B502900668DC1 /* mouth-neutral.json */,
 				E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */,
 				E5E2CD541EFA419000EBCCBF /* ViewController.swift */,
 				E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */,
@@ -140,13 +149,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89FDF8111F3B541700668DC1 /* mouth-happy-sad-angry.json in Resources */,
 				8996C6091F39A0DA00EEFCD7 /* ear.json in Resources */,
 				8996C60C1F39A0E900EEFCD7 /* nose.json in Resources */,
+				89FDF8191F3BF3C000668DC1 /* eye-closed.json in Resources */,
 				E5E2CD5D1EFA419000EBCCBF /* LaunchScreen.storyboard in Resources */,
 				E5E2CD5A1EFA419000EBCCBF /* Assets.xcassets in Resources */,
 				8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */,
 				E5E2CD581EFA419000EBCCBF /* Main.storyboard in Resources */,
 				8996C60B1F39A0E600EEFCD7 /* mouth.json in Resources */,
+				89FDF80F1F3B503500668DC1 /* mouth-neutral.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
