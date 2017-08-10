@@ -19,8 +19,6 @@ final class ViewController: UIViewController {
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
     
-    let drawingManager = DrawingManager()
-    
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
         
@@ -96,7 +94,6 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-        
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
@@ -109,11 +106,9 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         detectFace(on: ciImageWithOrientation)
     }
-        
 }
 
 extension ViewController {
-    
     func detectFace(on image: CIImage) {
         try? faceDetectionRequest.perform([faceDetection], on: image)
         if let results = faceDetection.results as? [VNFaceObservation] {
@@ -145,59 +140,65 @@ extension ViewController {
                         let faceContour = observation.landmarks?.faceContour
                         if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawFeature(featurePoints: faceContourPoints)
+                                DrawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: faceContourPoints)
                             }
                         }
                         
-                        let leftEyebrow = observation.landmarks?.leftEyebrow
+                        let leftEyebrow = observation.landmarks?.rightEyebrow // flipped for vision
                         if let leftEyebrowPoints = self.convertPointsForFace(leftEyebrow, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawFeature(featurePoints: leftEyebrowPoints)
+                                DrawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: leftEyebrowPoints)
                             }
                         }
                         
-                        let rightEyebrow = observation.landmarks?.rightEyebrow
+                        let rightEyebrow = observation.landmarks?.leftEyebrow // flipped for vision
                         if let rightEyebrowPoints = self.convertPointsForFace(rightEyebrow, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawFeature(featurePoints: rightEyebrowPoints)
+                                DrawingManager.drawFeature(shapeLayer: self.shapeLayer, featurePoints: rightEyebrowPoints)
                             }
                         }
                         
-                        let earDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEar)
+                        let earDrawing = DrawingManager.getRandomDrawing(type: FeatureType.LeftEar)
                         if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawEars(faceContourPoints: faceContourPoints, drawing: earDrawing)
+                                DrawingManager.drawEars(shapeLayer: self.shapeLayer, faceContourPoints: faceContourPoints, drawing: earDrawing)
                             }
                         }
 
-                        let eyeDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.LeftEye)
-                        let leftEye = observation.landmarks?.leftEye
+                        let leftEyeDrawing = DrawingManager.getRandomDrawing(type: FeatureType.LeftEye)
+                        let leftEye = observation.landmarks?.rightEye // flipped for vision
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawDrawing(featurePoints: leftEyePoints, drawing: eyeDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.LeftEye, featurePoints: leftEyePoints, drawing: leftEyeDrawing)
                             }
                         }
 
-                        let rightEye = observation.landmarks?.rightEye
+                        let rightEyeDrawing: Drawing
+                        if (DrawingManager.faceCustomization.leftEyeClosed != DrawingManager.faceCustomization.rightEyeClosed) {
+                            rightEyeDrawing = DrawingManager.getRandomDrawing(type: FeatureType.RightEye)
+                        } else {
+                            rightEyeDrawing = leftEyeDrawing
+                        }
+                        let rightEye = observation.landmarks?.leftEye // flipped for vision
                         if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawDrawing(featurePoints: rightEyePoints, drawing: eyeDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.RightEye, featurePoints: rightEyePoints, drawing: rightEyeDrawing)
                             }
                         }
                         
-                        let noseDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Nose)
+                        let noseDrawing = DrawingManager.getRandomDrawing(type: FeatureType.Nose)
                         let nose = observation.landmarks?.nose
                         if let nosePoints = self.convertPointsForFace(nose, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawDrawing(featurePoints: nosePoints, drawing: noseDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.Nose, featurePoints: nosePoints, drawing: noseDrawing)
                             }
                         }
                         
-                        let mouthDrawing = self.drawingManager.getRandomDrawing(type: FeatureType.Mouth)
+                        let mouthDrawing = DrawingManager.getRandomDrawing(type: FeatureType.Mouth)
                         let outerLips = observation.landmarks?.outerLips
                         if let outerLipsPoints = self.convertPointsForFace(outerLips, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                self.drawDrawing(featurePoints: outerLipsPoints, drawing: mouthDrawing)
+                                DrawingManager.drawDrawing(shapeLayer: self.shapeLayer, featureType: FeatureType.Mouth, featurePoints: outerLipsPoints, drawing: mouthDrawing)
                             }
                         }
                     }
@@ -206,96 +207,13 @@ extension ViewController {
         }
     }
     
-    func drawEars(faceContourPoints: [CGPoint], drawing: Drawing) {
-        let faceContourBb = getBoundingBox(points: faceContourPoints)
-        let featureBbPath = UIBezierPath(rect: faceContourBb)
-        let featureBbLayer = CAShapeLayer()
-        
-        featureBbLayer.fillColor = UIColor.clear.cgColor
-        featureBbLayer.strokeColor = UIColor.blue.cgColor
-        featureBbLayer.lineWidth = 2.0
-        featureBbLayer.path = featureBbPath.cgPath
-        
-        shapeLayer.addSublayer(featureBbLayer)
-        
-        let earWidth = faceContourBb.width/5
-        let earHeight = faceContourBb.height/2
-        
-        let leftEarBb = CGRect(x: faceContourPoints[faceContourPoints.count - 2].x, y: faceContourPoints[faceContourPoints.count - 2].y - earHeight, width: earWidth, height: earHeight)
-        let leftEarBbPath = UIBezierPath(rect: leftEarBb)
-        let leftEarBbLayer = CAShapeLayer()
-        
-        leftEarBbLayer.fillColor = UIColor.clear.cgColor
-        leftEarBbLayer.strokeColor = UIColor.green.cgColor
-        leftEarBbLayer.lineWidth = 2.0
-        leftEarBbLayer.path = leftEarBbPath.cgPath
-        
-        shapeLayer.addSublayer(leftEarBbLayer)
-        
-        let rightEarBb = CGRect(x: faceContourPoints[0].x - earWidth, y: faceContourPoints[0].y - earHeight, width: earWidth, height: earHeight)
-        let rightEarBbPath = UIBezierPath(rect: rightEarBb)
-        let rightEarBbLayer = CAShapeLayer()
-        
-        rightEarBbLayer.fillColor = UIColor.clear.cgColor
-        rightEarBbLayer.strokeColor = UIColor.green.cgColor
-        rightEarBbLayer.lineWidth = 2.0
-        rightEarBbLayer.path = rightEarBbPath.cgPath
-        
-        shapeLayer.addSublayer(rightEarBbLayer)
-        
-        var allDrawingPoints = [CGPoint]()
-        for stroke in drawing.strokes {
-            allDrawingPoints.append(contentsOf: stroke.points)
-        }
-        let drawingBb = getBoundingBox(points: allDrawingPoints)
-        
-        for stroke in drawing.strokes {
-            var drawingPoints = stroke.points
-            
-            for index in drawingPoints.indices {
-                drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * earWidth + leftEarBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * earHeight + leftEarBb.origin.y
-            }
-            
-            let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
-            drawingLayer.lineWidth = 2.0
-            
-            let drawingPath = UIBezierPath()
-            drawingPath.move(to: drawingPoints[0])
-            for i in 0..<drawingPoints.count - 1 {
-                drawingPath.addLine(to: drawingPoints[i])
-                drawingPath.move(to: drawingPoints[i])
-            }
-            drawingPath.addLine(to: drawingPoints[0])
-            drawingLayer.path = drawingPath.cgPath
-            
-            shapeLayer.addSublayer(drawingLayer)
+    func convert(_ points: UnsafePointer<vector_float2>, with count: Int) -> [(x: CGFloat, y: CGFloat)] {
+        var convertedPoints = [(x: CGFloat, y: CGFloat)]()
+        for i in 0...count {
+            convertedPoints.append((CGFloat(points[i].x), CGFloat(points[i].y)))
         }
         
-        for stroke in drawing.strokes {
-            var drawingPoints = stroke.points
-            
-            for index in drawingPoints.indices {
-                drawingPoints[index].x = (1 - drawingPoints[index].x/drawingBb.width) * earWidth + rightEarBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * earHeight + rightEarBb.origin.y
-            }
-            
-            let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
-            drawingLayer.lineWidth = 2.0
-            
-            let drawingPath = UIBezierPath()
-            drawingPath.move(to: drawingPoints[0])
-            for i in 0..<drawingPoints.count - 1 {
-                drawingPath.addLine(to: drawingPoints[i])
-                drawingPath.move(to: drawingPoints[i])
-            }
-            drawingPath.addLine(to: drawingPoints[0])
-            drawingLayer.path = drawingPath.cgPath
-            
-            shapeLayer.addSublayer(drawingLayer)
-        }
+        return convertedPoints
     }
     
     func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) -> [CGPoint]? {
@@ -357,99 +275,5 @@ extension ViewController {
         //print(gray)
         
         return array
-    }
-        
-        
-    func drawFeature(featurePoints: [CGPoint]) {
-        let newLayer = CAShapeLayer()
-        newLayer.strokeColor = UIColor.red.cgColor
-        newLayer.lineWidth = 2.0
-
-        let path = UIBezierPath()
-        path.move(to: featurePoints[0])
-        for i in 0..<featurePoints.count - 1 {
-            path.addLine(to: featurePoints[i])
-            path.move(to: featurePoints[i])
-        }
-        newLayer.path = path.cgPath
-
-        shapeLayer.addSublayer(newLayer)
-    }
-    
-    func drawDrawing(featurePoints: [CGPoint], drawing: Drawing, showFeatureBb: Bool = false) {
-        let featureBb = getBoundingBox(points: featurePoints)
-        if (showFeatureBb) {
-            let featureBbPath = UIBezierPath(rect: featureBb)
-            let featureBbLayer = CAShapeLayer()
-            
-            featureBbLayer.fillColor = UIColor.clear.cgColor
-            featureBbLayer.strokeColor = UIColor.blue.cgColor
-            featureBbLayer.lineWidth = 2.0
-            featureBbLayer.path = featureBbPath.cgPath
-            
-            shapeLayer.addSublayer(featureBbLayer)
-        }
-        
-        var allDrawingPoints = [CGPoint]()
-        for stroke in drawing.strokes {
-            allDrawingPoints.append(contentsOf: stroke.points)
-        }
-        let drawingBb = getBoundingBox(points: allDrawingPoints)
-        
-        for stroke in drawing.strokes {
-            var drawingPoints = stroke.points
-            
-            for index in drawingPoints.indices {
-                drawingPoints[index].x = drawingPoints[index].x/drawingBb.width * featureBb.width + featureBb.origin.x
-                drawingPoints[index].y = (1 - drawingPoints[index].y/drawingBb.height) * featureBb.height + featureBb.origin.y
-            }
-            
-            let drawingLayer = CAShapeLayer()
-            drawingLayer.strokeColor = UIColor.red.cgColor
-            drawingLayer.lineWidth = 2.0
-            
-            let drawingPath = UIBezierPath()
-            drawingPath.move(to: drawingPoints[0])
-            for i in 0..<drawingPoints.count - 1 {
-                drawingPath.addLine(to: drawingPoints[i])
-                drawingPath.move(to: drawingPoints[i])
-            }
-            drawingPath.addLine(to: drawingPoints[0])
-            drawingLayer.path = drawingPath.cgPath
-            
-            shapeLayer.addSublayer(drawingLayer)
-        }
-    }
-    
-    func getBoundingBox(points: [CGPoint]) -> CGRect {
-        var minX = points[0].x
-        var maxX = points[0].x
-        var minY = points[0].y
-        var maxY = points[0].y
-        
-        for i in 0..<points.count - 1 {
-            if (points[i].x < minX) {
-                minX = points[i].x
-            }
-            if (points[i].x > maxX) {
-                maxX = points[i].x
-            }
-            if (points[i].y < minY) {
-                minY = points[i].y
-            }
-            if (points[i].y > maxY) {
-                maxY = points[i].y
-            }
-        }
-        return (CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY))
-    }
-    
-    func convert(_ points: UnsafePointer<vector_float2>, with count: Int) -> [(x: CGFloat, y: CGFloat)] {
-        var convertedPoints = [(x: CGFloat, y: CGFloat)]()
-        for i in 0...count {
-            convertedPoints.append((CGFloat(points[i].x), CGFloat(points[i].y)))
-        }
-        
-        return convertedPoints
     }
 }
