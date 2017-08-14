@@ -18,7 +18,8 @@ final class ViewController: UIViewController {
     let faceLandmarks = VNDetectFaceLandmarksRequest()
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
-    
+ 
+    var currentEmotion = Emotion.Neutral;
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
         
@@ -46,6 +47,27 @@ final class ViewController: UIViewController {
         
         DispatchQueue.main.async {
             //self.classificationLabel.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
+            switch best.identifier {
+            case "Neutral":
+                self.currentEmotion = Emotion.Neutral
+                break
+            case "Happy":
+                self.currentEmotion = Emotion.Happy
+                break
+            case "Sad":
+                self.currentEmotion = Emotion.Sad
+                break
+            case "Angry":
+                self.currentEmotion = Emotion.Angry
+                break
+            case "Disgust":
+                self.currentEmotion = Emotion.Surprised
+                break
+            default:
+                self.currentEmotion = Emotion.Neutral
+                break
+            }
+            
             print(best.identifier);
         }
     }
@@ -138,11 +160,8 @@ extension ViewController {
                 faceLandmarks.inputFaceObservations = results
                 detectLandmarks(on: image)
                 
-                
-                
                 let bb = results[0].boundingBox
                 let cropped = image.cropped(to: bb.scaled(to:image.extent.size))
-                
                 classifyEmotion(on: cropped)
                 
                 DispatchQueue.main.async {
@@ -158,6 +177,7 @@ extension ViewController {
         if let landmarksResults = faceLandmarks.results as? [VNFaceObservation] {
             for observation in landmarksResults {
                 DispatchQueue.main.async {
+                    DrawingManager.faceCustomization.emotion = self.currentEmotion;
                     if let boundingBox = self.faceLandmarks.inputFaceObservations?.first?.boundingBox {
                         let faceBoundingBox = boundingBox.scaled(to: self.view.bounds.size)
                         

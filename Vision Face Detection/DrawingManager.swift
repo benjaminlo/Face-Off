@@ -269,11 +269,12 @@ enum FeatureType {
     case Eyebrow
 }
 
-enum Emotion {
+public enum Emotion {
     case Neutral
     case Happy
     case Sad
     case Angry
+    case Surprised
 }
 
 class FaceCustomization {
