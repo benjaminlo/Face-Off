@@ -48,19 +48,19 @@ final class ViewController: UIViewController {
         DispatchQueue.main.async {
             //self.classificationLabel.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
             switch best.identifier {
-            case "Neutral":
+            case "neutral":
                 self.currentEmotion = Emotion.Neutral
                 break
-            case "Happy":
+            case "happy":
                 self.currentEmotion = Emotion.Happy
                 break
-            case "Sad":
+            case "sad":
                 self.currentEmotion = Emotion.Sad
                 break
-            case "Angry":
+            case "angry":
                 self.currentEmotion = Emotion.Angry
                 break
-            case "Disgust":
+            case "disgust":
                 self.currentEmotion = Emotion.Surprised
                 break
             default:
