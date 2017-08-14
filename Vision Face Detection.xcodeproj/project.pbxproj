@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		891CDCEF1F4162AD00EBF02B /* eyeglasses.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF81A1F4161C300668DC1 /* eyeglasses.json */; };
 		8996C6001F38668C00EEFCD7 /* DrawingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8996C5FF1F38668C00EEFCD7 /* DrawingManager.swift */; };
 		8996C6091F39A0DA00EEFCD7 /* ear.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6061F39A09F00EEFCD7 /* ear.json */; };
 		8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6081F39A09F00EEFCD7 /* eye.json */; };
@@ -32,6 +33,7 @@
 		89FDF80C1F3B502900668DC1 /* mouth-neutral.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-neutral.json"; sourceTree = "<group>"; };
 		89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-happy-sad-angry.json"; sourceTree = "<group>"; };
 		89FDF8141F3BF3AF00668DC1 /* eye-closed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "eye-closed.json"; sourceTree = "<group>"; };
+		89FDF81A1F4161C300668DC1 /* eyeglasses.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyeglasses.json; sourceTree = "<group>"; };
 		E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Scaled.swift"; sourceTree = "<group>"; };
 		E5E2CD4F1EFA419000EBCCBF /* Vision Face Detection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vision Face Detection.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				8996C6061F39A09F00EEFCD7 /* ear.json */,
 				89FDF8141F3BF3AF00668DC1 /* eye-closed.json */,
 				8996C6081F39A09F00EEFCD7 /* eye.json */,
+				89FDF81A1F4161C300668DC1 /* eyeglasses.json */,
 				8996C6051F39A09F00EEFCD7 /* mouth.json */,
 				8996C6071F39A09F00EEFCD7 /* nose.json */,
 				89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */,
@@ -158,6 +161,7 @@
 				8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */,
 				E5E2CD581EFA419000EBCCBF /* Main.storyboard in Resources */,
 				8996C60B1F39A0E600EEFCD7 /* mouth.json in Resources */,
+				891CDCEF1F4162AD00EBF02B /* eyeglasses.json in Resources */,
 				89FDF80F1F3B503500668DC1 /* mouth-neutral.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
