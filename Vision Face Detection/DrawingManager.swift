@@ -171,8 +171,8 @@ class DrawingManager {
         shapeLayer.addSublayer(newLayer)
     }
     
-    static func drawDrawing(ofType featureType: FeatureType, withPoints featurePoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {
-        let drawing = getRandomDrawing(type: featureType)
+    static func drawDrawing(ofType featureType: FeatureType, withPoints featurePoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false, givenDrawing: Drawing? = nil) {
+        let drawing = givenDrawing == nil ? getRandomDrawing(type: featureType) : givenDrawing!
         let color = faceCustomization.getColor(type: featureType)
         let verticalFlip = featureType == FeatureType.Mouth && (faceCustomization.emotion == Emotion.Angry || faceCustomization.emotion == Emotion.Sad)
         let horizontalFlip = featureType == FeatureType.RightEar || featureType == FeatureType.RightEye
@@ -197,6 +197,14 @@ class DrawingManager {
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
         createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: featureBb.height, color: color, horizontalFlip: horizontalFlip, verticalFlip: verticalFlip)
+    }
+    
+    static func drawEyes(withLeftEyePoints leftEyePoints: [CGPoint], andRightEyePoints rightEyePoints: [CGPoint], onLayer shapeLayer: CAShapeLayer) {
+        let leftEyeDrawing = getRandomDrawing(type: FeatureType.LeftEye)
+        let rightEyeDrawing = faceCustomization.leftEyeClosed != faceCustomization.rightEyeClosed ?  getRandomDrawing(type: FeatureType.RightEye) : leftEyeDrawing
+        
+        drawDrawing(ofType: FeatureType.LeftEye, withPoints: leftEyePoints, onLayer: shapeLayer, givenDrawing: leftEyeDrawing)
+        drawDrawing(ofType: FeatureType.RightEye, withPoints: rightEyePoints, onLayer: shapeLayer, givenDrawing: rightEyeDrawing)
     }
     
     static func drawEars(withPoints faceContourPoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {

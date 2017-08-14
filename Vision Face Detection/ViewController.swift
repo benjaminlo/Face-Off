@@ -160,16 +160,10 @@ extension ViewController {
                         }
 
                         let leftEye = observation.landmarks?.rightEye // flipped for vision
-                        if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox) {
-                            DispatchQueue.main.async {
-                                DrawingManager.drawDrawing(ofType: FeatureType.LeftEye, withPoints: leftEyePoints, onLayer: self.shapeLayer)
-                            }
-                        }
-
                         let rightEye = observation.landmarks?.leftEye // flipped for vision
-                        if let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
+                        if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox), let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
-                                DrawingManager.drawDrawing(ofType: FeatureType.RightEye, withPoints: rightEyePoints, onLayer: self.shapeLayer)
+                                DrawingManager.drawEyes(withLeftEyePoints: leftEyePoints, andRightEyePoints: rightEyePoints, onLayer: self.shapeLayer)
                             }
                         }
                         
