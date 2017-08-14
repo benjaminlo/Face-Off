@@ -28,6 +28,28 @@ final class ViewController: UIViewController {
         return previewLayer
     }()
     
+    lazy var classificationRequest: VNCoreMLRequest = {
+        // Load the ML model through its generated class and create a Vision request for it.
+        do {
+            let model = try VNCoreMLModel(for: FaceOff11().model)
+            return VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
+        } catch {
+            fatalError("can't load Vision ML model: \(error)")
+        }
+    }()
+    
+    func handleClassification(request: VNRequest, error: Error?) {
+        guard let observations = request.results as? [VNClassificationObservation]
+            else { fatalError("unexpected result type from VNCoreMLRequest") }
+        guard let best = observations.first
+            else { fatalError("can't get best result") }
+        
+        DispatchQueue.main.async {
+            //self.classificationLabel.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
+            print(best.identifier);
+        }
+    }
+    
     var frontCamera: AVCaptureDevice? = {
         return AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera, for: AVMediaType.video, position: .front)
     }()
@@ -116,9 +138,12 @@ extension ViewController {
                 faceLandmarks.inputFaceObservations = results
                 detectLandmarks(on: image)
                 
+                
+                
                 let bb = results[0].boundingBox
                 let cropped = image.cropped(to: bb.scaled(to:image.extent.size))
-                classifyEmotion(on: UIImage(ciImage: cropped))
+                
+                classifyEmotion(on: cropped)
                 
                 DispatchQueue.main.async {
                     self.shapeLayer.sublayers?.removeAll()
@@ -230,16 +255,24 @@ extension ViewController {
         return nil
     }
     
-    func classifyEmotion(on image: UIImage) {
-        let mlArray = convertImage(image: image)
-
-        let model = FaceOff9()
+    func classifyEmotion(on image: CIImage) {
+//        let mlArray = convertImage(image: image)
+//
+//        let model = FaceOff9()
+//        do {
+//            let output = try model.prediction(input1: mlArray!)
+//            print (output.classLabel)
+//        }
+//        catch {
+//            print("Error info: \(error)")
+//        }
+        
+        // Run the Core ML MNIST classifier -- results in handleClassification method
+        let handler = VNImageRequestHandler(ciImage: image)
         do {
-            let output = try model.prediction(input1: mlArray!)
-            print (output.classLabel)
-        }
-        catch {
-            print("Error info: \(error)")
+            try handler.perform([classificationRequest])
+        } catch {
+            print(error)
         }
     }
     

@@ -17,6 +17,8 @@
 		89FDF8191F3BF3C000668DC1 /* eye-closed.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF8141F3BF3AF00668DC1 /* eye-closed.json */; };
 		955B06271F3AED5D00663C24 /* UIImage+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B06261F3AED5D00663C24 /* UIImage+Util.swift */; };
 		95D4EC761F3C328A004C3EB3 /* FaceOff9.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */; };
+		95D4EC781F416C91004C3EB3 /* FaceOff10.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC771F416C90004C3EB3 /* FaceOff10.mlmodel */; };
+		95D4EC7A1F417361004C3EB3 /* FaceOff11.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC791F417360004C3EB3 /* FaceOff11.mlmodel */; };
 		E56B7E711EFD261E006704F3 /* CGRect+Scaled.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */; };
 		E5E2CD531EFA419000EBCCBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */; };
 		E5E2CD551EFA419000EBCCBF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E2CD541EFA419000EBCCBF /* ViewController.swift */; };
@@ -36,6 +38,8 @@
 		89FDF8141F3BF3AF00668DC1 /* eye-closed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "eye-closed.json"; sourceTree = "<group>"; };
 		955B06261F3AED5D00663C24 /* UIImage+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Util.swift"; sourceTree = "<group>"; };
 		95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff9.mlmodel; sourceTree = "<group>"; };
+		95D4EC771F416C90004C3EB3 /* FaceOff10.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff10.mlmodel; sourceTree = "<group>"; };
+		95D4EC791F417360004C3EB3 /* FaceOff11.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff11.mlmodel; sourceTree = "<group>"; };
 		E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Scaled.swift"; sourceTree = "<group>"; };
 		E5E2CD4F1EFA419000EBCCBF /* Vision Face Detection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vision Face Detection.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +80,8 @@
 		E5E2CD511EFA419000EBCCBF /* Vision Face Detection */ = {
 			isa = PBXGroup;
 			children = (
+				95D4EC791F417360004C3EB3 /* FaceOff11.mlmodel */,
+				95D4EC771F416C90004C3EB3 /* FaceOff10.mlmodel */,
 				95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */,
 				8996C6061F39A09F00EEFCD7 /* ear.json */,
 				89FDF8141F3BF3AF00668DC1 /* eye-closed.json */,
@@ -180,6 +186,8 @@
 				8996C6001F38668C00EEFCD7 /* DrawingManager.swift in Sources */,
 				E5E2CD531EFA419000EBCCBF /* AppDelegate.swift in Sources */,
 				955B06271F3AED5D00663C24 /* UIImage+Util.swift in Sources */,
+				95D4EC7A1F417361004C3EB3 /* FaceOff11.mlmodel in Sources */,
+				95D4EC781F416C91004C3EB3 /* FaceOff10.mlmodel in Sources */,
 				95D4EC761F3C328A004C3EB3 /* FaceOff9.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
