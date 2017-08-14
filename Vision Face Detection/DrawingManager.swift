@@ -45,6 +45,9 @@ class DrawingManager {
         case .Nose:
             file = "nose"
             break
+        case .Eyeglasses:
+            file = "eyeglasses"
+            break
         default:
             break
         }
@@ -207,6 +210,43 @@ class DrawingManager {
         drawDrawing(ofType: FeatureType.RightEye, withPoints: rightEyePoints, onLayer: shapeLayer, givenDrawing: rightEyeDrawing)
     }
     
+    static func drawEyeglasses(withLeftEyePoints leftEyePoints: [CGPoint], andRightEyePoints rightEyePoints: [CGPoint], andFaceContourPoints faceContourPoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {
+        var points = [CGPoint(x: faceContourPoints[0].x, y: rightEyePoints[0].y), CGPoint(x: faceContourPoints[faceContourPoints.count - 2].x, y: leftEyePoints[0].y)] // only care about x values of faceCountourPoints
+        for i in 0..<leftEyePoints.count - 1 { // last point in array is invalid
+            points.append(leftEyePoints[i])
+        }
+        for i in 0..<rightEyePoints.count {
+            points.append(rightEyePoints[i])
+        }
+        
+        let drawing = getRandomDrawing(type: FeatureType.Eyeglasses)
+        let color = faceCustomization.getColor(type: FeatureType.Eyeglasses)
+        let faceContourBb = getBoundingBox(points: faceContourPoints)
+        let rotationAngle = atan((faceContourPoints[faceContourPoints.count - 2].y - faceContourPoints[0].y)/faceContourBb.width)
+        let featureBb = getBoundingBox(points: points)
+        let eyeglassesHeight = getBoundingBox(points: leftEyePoints).height * 2
+        
+        if (showFeatureBb) {
+            let featureBbPath = UIBezierPath(rect: featureBb)
+            let featureBbLayer = CAShapeLayer()
+
+            featureBbLayer.fillColor = UIColor.clear.cgColor
+            featureBbLayer.strokeColor = color.cgColor
+            featureBbLayer.lineWidth = 2.0
+            featureBbLayer.path = featureBbPath.cgPath
+
+            shapeLayer.addSublayer(featureBbLayer)
+        }
+    
+        var allDrawingPoints = [CGPoint]()
+        for stroke in drawing.strokes {
+            allDrawingPoints.append(contentsOf: stroke.points)
+        }
+        let drawingBb = getBoundingBox(points: allDrawingPoints)
+        
+        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: eyeglassesHeight, color: color, rotationAngle: rotationAngle)
+    }
+    
     static func drawEars(withPoints faceContourPoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {
         let drawing = getRandomDrawing(type: FeatureType.LeftEar)
         let color = faceCustomization.getColor(type: FeatureType.LeftEar)
@@ -267,6 +307,7 @@ enum FeatureType {
     case RightEar
     case FaceContour
     case Eyebrow
+    case Eyeglasses
 }
 
 enum Emotion {
@@ -280,12 +321,14 @@ class FaceCustomization {
     var emotion = Emotion.Neutral
     var leftEyeClosed = false
     var rightEyeClosed = false
+    var hasEyeglasses = false
     var eyeColor = UIColor.black
     var noseColor = UIColor.black
     var mouthColor = UIColor.black
     var earColor = UIColor.black
     var faceContourColor = UIColor.black
     var eyebrowColor = UIColor.black
+    var eyeglassesColor = UIColor.black
     
     func getColor(type: FeatureType) -> UIColor {
         switch(type) {
@@ -301,6 +344,8 @@ class FaceCustomization {
             return faceContourColor
         case .Eyebrow:
             return eyebrowColor
+        case .Eyeglasses:
+            return eyeglassesColor
         }
     }
 }
