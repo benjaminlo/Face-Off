@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import Vision
+import ProjectOxfordFace
 
 final class ViewController: UIViewController {
     var session: AVCaptureSession?
@@ -18,7 +19,9 @@ final class ViewController: UIViewController {
     let faceLandmarks = VNDetectFaceLandmarksRequest()
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
+    let faceClient = MPOFaceServiceClient(endpointAndSubscriptionKey:"https://westcentralus.api.cognitive.microsoft.com/face/v1.0", key: "1d692a4678fd49939f43e537185ff60e")
  
+    var frameCounter = 0
     var currentEmotion = Emotion.Neutral;
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
@@ -32,7 +35,7 @@ final class ViewController: UIViewController {
     lazy var classificationRequest: VNCoreMLRequest = {
         // Load the ML model through its generated class and create a Vision request for it.
         do {
-            let model = try VNCoreMLModel(for: FaceOff11().model)
+            let model = try VNCoreMLModel(for: FaceOff10().model)
             return VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
         } catch {
             fatalError("can't load Vision ML model: \(error)")
@@ -147,6 +150,20 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         //leftMirrored for front camera
         let ciImageWithOrientation = ciImage.oriented(forExifOrientation: Int32(UIImageOrientation.leftMirrored.rawValue))
+        
+        frameCounter = frameCounter + 1
+        if (frameCounter % 10 == 0){
+            //var data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+            let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: nil)
+           
+            
+            let faceAttributes = [(MPOFaceAttributeTypeGender), (MPOFaceAttributeTypeAge), (MPOFaceAttributeTypeHair), (MPOFaceAttributeTypeFacialHair), (MPOFaceAttributeTypeMakeup), (MPOFaceAttributeTypeEmotion), (MPOFaceAttributeTypeOcclusion), (MPOFaceAttributeTypeExposure), (MPOFaceAttributeTypeHeadPose), (MPOFaceAttributeTypeAccessories)]
+            let faceArrayCompletionBlock = {(collection : Array<MPOFace>, error:Error) -> Void in
+                print(collection.count)
+                } as! MPOFaceArrayCompletionBlock
+            
+            faceClient?.detect(with: data, returnFaceId: true, returnFaceLandmarks: true, returnFaceAttributes: faceAttributes, completionBlock: faceArrayCompletionBlock)
+        }
         
         detectFace(on: ciImageWithOrientation)
     }
