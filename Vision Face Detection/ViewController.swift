@@ -186,6 +186,7 @@ extension ViewController {
                         if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
                             DispatchQueue.main.async {
                                 DrawingManager.drawFeature(ofType: FeatureType.FaceContour, withPoints: faceContourPoints, onLayer: self.shapeLayer)
+                                DrawingManager.drawEars(withPoints: faceContourPoints, onLayer: self.shapeLayer)
                             }
                         }
                         
@@ -202,18 +203,15 @@ extension ViewController {
                                 DrawingManager.drawFeature(ofType: FeatureType.Eyebrow, withPoints: rightEyebrowPoints, onLayer: self.shapeLayer)
                             }
                         }
-                        
-                        if let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
-                            DispatchQueue.main.async {
-                                DrawingManager.drawEars(withPoints: faceContourPoints, onLayer: self.shapeLayer)
-                            }
-                        }
 
                         let leftEye = observation.landmarks?.rightEye // flipped for vision
                         let rightEye = observation.landmarks?.leftEye // flipped for vision
                         if let leftEyePoints = self.convertPointsForFace(leftEye, faceBoundingBox), let rightEyePoints = self.convertPointsForFace(rightEye, faceBoundingBox) {
                             DispatchQueue.main.async {
                                 DrawingManager.drawEyes(withLeftEyePoints: leftEyePoints, andRightEyePoints: rightEyePoints, onLayer: self.shapeLayer)
+                                if DrawingManager.faceCustomization.hasEyeglasses, let faceContourPoints = self.convertPointsForFace(faceContour, faceBoundingBox) {
+                                    DrawingManager.drawEyeglasses(withLeftEyePoints: leftEyePoints, andRightEyePoints: rightEyePoints, andFaceContourPoints: faceContourPoints, onLayer: self.shapeLayer)
+                                }
                             }
                         }
                         
