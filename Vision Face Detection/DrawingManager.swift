@@ -38,8 +38,22 @@ class DrawingManager {
             break
         case .Mouth:
             file = "mouth"
-            if (faceCustomization.emotion != Emotion.Neutral) {
-                file.append("-happy-sad-angry")
+            switch (faceCustomization.emotion) {
+            case .Happy:
+                file.append("-happy")
+                break
+            case .Sad:
+                file.append("-sad")
+                break
+            case .Angry:
+                file.append("-angry")
+                break
+            case .Surprised:
+                file.append("-surprised")
+                break
+            default:
+                file.append("-neutral")
+                break
             }
             break
         case .Nose:

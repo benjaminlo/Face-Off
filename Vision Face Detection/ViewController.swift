@@ -23,7 +23,7 @@ final class ViewController: UIViewController {
     
     @IBAction func toggleViewFinder(sender: UIButton) {
         controlsViewOpacityState += 1
-        let opacityOptions = [Float(1.0), Float(0.5), Float(0.0)]
+        let opacityOptions = [Float(1.0), Float(0.4), Float(0.0)]
         self.previewLayer?.opacity = opacityOptions[self.controlsViewOpacityState % 3]
     }
     
@@ -66,7 +66,6 @@ final class ViewController: UIViewController {
             else { fatalError("can't get best result") }
         
         DispatchQueue.main.async {
-            //self.classificationLabel.text = "Classification: \"\(best.identifier)\" Confidence: \(best.confidence)"
             switch best.identifier {
             case "neutral":
                 self.currentEmotion = Emotion.Neutral
@@ -87,8 +86,6 @@ final class ViewController: UIViewController {
                 self.currentEmotion = Emotion.Neutral
                 break
             }
-            
-            print(best.identifier);
         }
     }
     

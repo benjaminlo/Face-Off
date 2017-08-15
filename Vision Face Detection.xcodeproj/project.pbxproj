@@ -9,13 +9,16 @@
 /* Begin PBXBuildFile section */
 		864E53E44A7E5303A9A6706A /* Pods_Vision_Face_Detection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81348311F2AE58D0CB105EBA /* Pods_Vision_Face_Detection.framework */; };
 		891CDCEF1F4162AD00EBF02B /* eyeglasses.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF81A1F4161C300668DC1 /* eyeglasses.json */; };
+		891CDCF31F42FB6F00EBF02B /* mouth-angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 891CDCF11F42FB6A00EBF02B /* mouth-angry.json */; };
+		891CDCF41F42FB7100EBF02B /* mouth-happy.json in Resources */ = {isa = PBXBuildFile; fileRef = 891CDCF21F42FB6A00EBF02B /* mouth-happy.json */; };
+		891CDCF51F42FB7300EBF02B /* mouth-sad.json in Resources */ = {isa = PBXBuildFile; fileRef = 891CDCF01F42FB6A00EBF02B /* mouth-sad.json */; };
+		891CDCF71F42FC7400EBF02B /* mouth-surprised.json in Resources */ = {isa = PBXBuildFile; fileRef = 891CDCF61F42FC5500EBF02B /* mouth-surprised.json */; };
 		8996C6001F38668C00EEFCD7 /* DrawingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8996C5FF1F38668C00EEFCD7 /* DrawingManager.swift */; };
 		8996C6091F39A0DA00EEFCD7 /* ear.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6061F39A09F00EEFCD7 /* ear.json */; };
 		8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6081F39A09F00EEFCD7 /* eye.json */; };
 		8996C60B1F39A0E600EEFCD7 /* mouth.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6051F39A09F00EEFCD7 /* mouth.json */; };
 		8996C60C1F39A0E900EEFCD7 /* nose.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6071F39A09F00EEFCD7 /* nose.json */; };
 		89FDF80F1F3B503500668DC1 /* mouth-neutral.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF80C1F3B502900668DC1 /* mouth-neutral.json */; };
-		89FDF8111F3B541700668DC1 /* mouth-happy-sad-angry.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */; };
 		89FDF8191F3BF3C000668DC1 /* eye-closed.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF8141F3BF3AF00668DC1 /* eye-closed.json */; };
 		955B06271F3AED5D00663C24 /* UIImage+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B06261F3AED5D00663C24 /* UIImage+Util.swift */; };
 		95D4EC761F3C328A004C3EB3 /* FaceOff9.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */; };
@@ -33,13 +36,16 @@
 		237E50268AC55805F4D1BE8E /* Pods-Vision Face Detection.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vision Face Detection.release.xcconfig"; path = "Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection.release.xcconfig"; sourceTree = "<group>"; };
 		6215339392B29FC5D50AD2D9 /* Pods-Vision Face Detection.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vision Face Detection.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection.debug.xcconfig"; sourceTree = "<group>"; };
 		81348311F2AE58D0CB105EBA /* Pods_Vision_Face_Detection.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Vision_Face_Detection.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		891CDCF01F42FB6A00EBF02B /* mouth-sad.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-sad.json"; sourceTree = "<group>"; };
+		891CDCF11F42FB6A00EBF02B /* mouth-angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-angry.json"; sourceTree = "<group>"; };
+		891CDCF21F42FB6A00EBF02B /* mouth-happy.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-happy.json"; sourceTree = "<group>"; };
+		891CDCF61F42FC5500EBF02B /* mouth-surprised.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-surprised.json"; sourceTree = "<group>"; };
 		8996C5FF1F38668C00EEFCD7 /* DrawingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingManager.swift; sourceTree = "<group>"; };
 		8996C6051F39A09F00EEFCD7 /* mouth.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mouth.json; sourceTree = "<group>"; };
 		8996C6061F39A09F00EEFCD7 /* ear.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ear.json; sourceTree = "<group>"; };
 		8996C6071F39A09F00EEFCD7 /* nose.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = nose.json; sourceTree = "<group>"; };
 		8996C6081F39A09F00EEFCD7 /* eye.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eye.json; sourceTree = "<group>"; };
 		89FDF80C1F3B502900668DC1 /* mouth-neutral.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-neutral.json"; sourceTree = "<group>"; };
-		89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-happy-sad-angry.json"; sourceTree = "<group>"; };
 		89FDF8141F3BF3AF00668DC1 /* eye-closed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "eye-closed.json"; sourceTree = "<group>"; };
 		89FDF81A1F4161C300668DC1 /* eyeglasses.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyeglasses.json; sourceTree = "<group>"; };
 		955B06261F3AED5D00663C24 /* UIImage+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Util.swift"; sourceTree = "<group>"; };
@@ -106,8 +112,11 @@
 				89FDF81A1F4161C300668DC1 /* eyeglasses.json */,
 				8996C6051F39A09F00EEFCD7 /* mouth.json */,
 				8996C6071F39A09F00EEFCD7 /* nose.json */,
-				89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */,
+				891CDCF11F42FB6A00EBF02B /* mouth-angry.json */,
+				891CDCF21F42FB6A00EBF02B /* mouth-happy.json */,
 				89FDF80C1F3B502900668DC1 /* mouth-neutral.json */,
+				891CDCF01F42FB6A00EBF02B /* mouth-sad.json */,
+				891CDCF61F42FC5500EBF02B /* mouth-surprised.json */,
 				E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */,
 				E5E2CD541EFA419000EBCCBF /* ViewController.swift */,
 				E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */,
@@ -191,17 +200,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				89FDF8111F3B541700668DC1 /* mouth-happy-sad-angry.json in Resources */,
+				891CDCF41F42FB7100EBF02B /* mouth-happy.json in Resources */,
 				8996C6091F39A0DA00EEFCD7 /* ear.json in Resources */,
 				8996C60C1F39A0E900EEFCD7 /* nose.json in Resources */,
 				89FDF8191F3BF3C000668DC1 /* eye-closed.json in Resources */,
 				E5E2CD5D1EFA419000EBCCBF /* LaunchScreen.storyboard in Resources */,
+				891CDCF71F42FC7400EBF02B /* mouth-surprised.json in Resources */,
 				E5E2CD5A1EFA419000EBCCBF /* Assets.xcassets in Resources */,
 				8996C60A1F39A0E200EEFCD7 /* eye.json in Resources */,
+				891CDCF51F42FB7300EBF02B /* mouth-sad.json in Resources */,
 				E5E2CD581EFA419000EBCCBF /* Main.storyboard in Resources */,
 				8996C60B1F39A0E600EEFCD7 /* mouth.json in Resources */,
 				891CDCEF1F4162AD00EBF02B /* eyeglasses.json in Resources */,
 				89FDF80F1F3B503500668DC1 /* mouth-neutral.json in Resources */,
+				891CDCF31F42FB6F00EBF02B /* mouth-angry.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
