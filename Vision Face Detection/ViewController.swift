@@ -22,6 +22,7 @@ final class ViewController: UIViewController {
     let faceClient = MPOFaceServiceClient(endpointAndSubscriptionKey:"https://westcentralus.api.cognitive.microsoft.com/face/v1.0/", key: "1d692a4678fd49939f43e537185ff60e")
  
     var frameCounter = 0
+    var emotionApiBusy = false;
     var currentEmotion = Emotion.Neutral;
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
@@ -152,27 +153,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         let ciImageWithOrientation = ciImage.oriented(forExifOrientation: Int32(UIImageOrientation.leftMirrored.rawValue))
         
         frameCounter = frameCounter + 1
-        if (frameCounter % 10 == 0){
-            //var data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
-            var image = UIImage(ciImage: ciImageWithOrientation)
-            UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
-            defer { UIGraphicsEndImageContext() }
-            image.draw(in: CGRect(origin: .zero, size: image.size))
-            if let redraw = UIGraphicsGetImageFromCurrentImageContext() {
-            let data = UIImageJPEGRepresentation(redraw, 1.0)
-                
-            let faceAttributes = [(MPOFaceAttributeTypeGender).rawValue, (MPOFaceAttributeTypeAge).rawValue, (MPOFaceAttributeTypeHair).rawValue, (MPOFaceAttributeTypeFacialHair).rawValue, (MPOFaceAttributeTypeMakeup).rawValue, (MPOFaceAttributeTypeEmotion).rawValue, (MPOFaceAttributeTypeOcclusion).rawValue, (MPOFaceAttributeTypeExposure).rawValue, (MPOFaceAttributeTypeHeadPose).rawValue, (MPOFaceAttributeTypeAccessories).rawValue]
-            let faceArrayCompletionBlock = {(collection: Array<MPOFace>?, error: Error?) -> () in
-                if (error != nil) {
-                    print(error.debugDescription)
-                }
-                print(collection!.count)
-            } as MPOFaceArrayCompletionBlock
-                
-            
-            faceClient?.detect(with: data, returnFaceId: true, returnFaceLandmarks: true, returnFaceAttributes: faceAttributes, completionBlock: faceArrayCompletionBlock)
-            }
-        }
+        
         detectFace(on: ciImageWithOrientation)
     }
 }
@@ -184,6 +165,52 @@ extension ViewController {
             if !results.isEmpty {
                 faceLandmarks.inputFaceObservations = results
                 detectLandmarks(on: image)
+                
+                if (frameCounter % 10 == 0 && !emotionApiBusy){
+                    self.emotionApiBusy = true
+                    let start = Date()
+                    //var data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+                    var uiImage = UIImage(ciImage: image)
+                    UIGraphicsBeginImageContextWithOptions(uiImage.size, false, uiImage.scale)
+                    defer { UIGraphicsEndImageContext() }
+                    uiImage.draw(in: CGRect(origin: .zero, size: uiImage.size))
+                    if let redraw = UIGraphicsGetImageFromCurrentImageContext() {
+                        let data = UIImageJPEGRepresentation(redraw, 1.0)
+                        
+                        let faceAttributes = [(MPOFaceAttributeTypeGender).rawValue, (MPOFaceAttributeTypeAge).rawValue, (MPOFaceAttributeTypeHair).rawValue, (MPOFaceAttributeTypeFacialHair).rawValue, (MPOFaceAttributeTypeMakeup).rawValue, (MPOFaceAttributeTypeEmotion).rawValue, (MPOFaceAttributeTypeOcclusion).rawValue, (MPOFaceAttributeTypeExposure).rawValue, (MPOFaceAttributeTypeHeadPose).rawValue, (MPOFaceAttributeTypeAccessories).rawValue]
+                        let faceArrayCompletionBlock = {(collection: Array<MPOFace>?, error: Error?) -> () in
+                            if (error != nil) {
+                                print(error.debugDescription)
+                                self.emotionApiBusy = false
+                                return
+                            }
+                            
+                            if (collection?.count == 1){
+                                let face = collection![0]
+                                if let emotion = face.attributes!.emotion.mostEmotion {
+                                    print("emotion: " + emotion)
+                                }
+                                for accessory in face.attributes.accessories.accessories {
+                                    var access = accessory as! [String : Any]
+                                    if let val = access["type"] {
+                                        if "glasses" == val as! String {
+                                                DrawingManager.faceCustomization.hasEyeglasses = true
+                                        }
+                                    }
+                                }
+                            }
+                            self.emotionApiBusy = false
+                            } as MPOFaceArrayCompletionBlock
+                        
+                        
+                        faceClient?.detect(with: data, returnFaceId: true, returnFaceLandmarks: true, returnFaceAttributes: faceAttributes, completionBlock: faceArrayCompletionBlock)
+                        
+                        var interval = Date().timeIntervalSince(start)
+                        print("Time Taken: ")
+                        print(interval)
+                    }
+                }
+                
                 
                 let bb = results[0].boundingBox
                 let cropped = image.cropped(to: bb.scaled(to:image.extent.size))
