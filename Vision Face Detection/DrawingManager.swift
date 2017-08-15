@@ -224,7 +224,7 @@ class DrawingManager {
         let faceContourBb = getBoundingBox(points: faceContourPoints)
         let rotationAngle = atan((faceContourPoints[faceContourPoints.count - 2].y - faceContourPoints[0].y)/faceContourBb.width)
         let featureBb = getBoundingBox(points: points)
-        let eyeglassesHeight = getBoundingBox(points: leftEyePoints).height * 2
+        let eyeglassesHeight = getBoundingBox(points: leftEyePoints).height * 5
         
         if (showFeatureBb) {
             let featureBbPath = UIBezierPath(rect: featureBb)
@@ -310,7 +310,7 @@ enum FeatureType {
     case Eyeglasses
 }
 
-public enum Emotion {
+public enum Emotion : String {
     case Neutral
     case Happy
     case Sad
