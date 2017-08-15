@@ -12,16 +12,31 @@ import Vision
 import ProjectOxfordFace
 
 final class ViewController: UIViewController {
+    @IBOutlet weak var layersView: UIView?
+    @IBOutlet weak var emotionLabel: UILabel?
+    @IBOutlet weak var avatarToggleButton: UIButton?
+    @IBOutlet weak var viewFinderToggleButton: UIButton?
+    
+    @IBAction func toggleAvatar(sender: UIButton) {
+        self.shapeLayer.isHidden = !self.shapeLayer.isHidden
+    }
+    
+    @IBAction func toggleViewFinder(sender: UIButton) {
+        controlsViewOpacityState += 1
+        let opacityOptions = [Float(1.0), Float(0.5), Float(0.0)]
+        self.previewLayer?.opacity = opacityOptions[self.controlsViewOpacityState % 3]
+    }
+    
     var session: AVCaptureSession?
     let shapeLayer = CAShapeLayer()
-    @IBOutlet weak var emotionLabel: UILabel?
-    
+
     let faceDetection = VNDetectFaceRectanglesRequest()
     let faceLandmarks = VNDetectFaceLandmarksRequest()
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
     let faceClient = MPOFaceServiceClient(endpointAndSubscriptionKey:"https://westcentralus.api.cognitive.microsoft.com/face/v1.0/", key: "1d692a4678fd49939f43e537185ff60e")
  
+    var controlsViewOpacityState = 0
     var frameCounter = 0
     var emotionApiBusy = false;
     var currentEmotion = Emotion.Neutral;
@@ -98,8 +113,7 @@ final class ViewController: UIViewController {
         super.viewDidAppear(animated)
         guard let previewLayer = previewLayer else { return }
         
-        previewLayer.opacity = 0.5
-        view.layer.addSublayer(previewLayer)
+        layersView!.layer.addSublayer(previewLayer)
         
         shapeLayer.strokeColor = UIColor.red.cgColor
         shapeLayer.lineWidth = 2.0
@@ -107,7 +121,9 @@ final class ViewController: UIViewController {
         //needs to filp coordinate system for Vision
         shapeLayer.setAffineTransform(CGAffineTransform(scaleX: -1, y: -1))
         
-        view.layer.addSublayer(shapeLayer)
+        shapeLayer.isHidden = true
+        
+        layersView!.layer.addSublayer(shapeLayer)
     }
     
     func sessionPrepare() {
