@@ -23,18 +23,28 @@ class DrawingManager {
         switch type {
         case .LeftEye:
             file = "eye"
-            if (faceCustomization.leftEyeClosed) {
+            if (faceCustomization.emotion == Emotion.Surprised) {
+                file.append("-mindblown")
+            } else if (faceCustomization.leftEyeClosed) {
                 file.append("-closed")
             }
             break
         case .RightEye:
             file = "eye"
-            if (faceCustomization.rightEyeClosed) {
+            if (faceCustomization.emotion == Emotion.Surprised) {
+                file.append("-mindblown")
+            } else if (faceCustomization.rightEyeClosed) {
                 file.append("-closed")
             }
             break
         case .LeftEar, .RightEar:
             file = "ear"
+            if (faceCustomization.emotion == Emotion.Surprised) {
+                file = "eye-mindblown"
+            }
+            else {
+                file.append("-demo")
+            }
             break
         case .Mouth:
             file = "mouth"
@@ -49,7 +59,7 @@ class DrawingManager {
                 file.append("-angry")
                 break
             case .Surprised:
-                file.append("-surprised")
+                file.append("-mindblown")
                 break
             default:
                 file.append("-neutral")
@@ -58,6 +68,12 @@ class DrawingManager {
             break
         case .Nose:
             file = "nose"
+            if (faceCustomization.emotion == Emotion.Surprised) {
+                file = "eye-mindblown"
+            }
+            else {
+                file.append("-demo")
+            }
             break
         case .Eyeglasses:
             file = "eyeglasses"
@@ -237,6 +253,9 @@ class DrawingManager {
         let color = faceCustomization.getColor(type: FeatureType.Eyeglasses)
         let faceContourBb = getBoundingBox(points: faceContourPoints)
         let rotationAngle = atan((faceContourPoints[faceContourPoints.count - 2].y - faceContourPoints[0].y)/faceContourBb.width)
+        for i in 0..<points.count {
+            points[i].y -= 25
+        }
         let featureBb = getBoundingBox(points: points)
         let eyeglassesHeight = getBoundingBox(points: leftEyePoints).height * 5
         
@@ -258,7 +277,7 @@ class DrawingManager {
         }
         let drawingBb = getBoundingBox(points: allDrawingPoints)
         
-        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: eyeglassesHeight, color: color, rotationAngle: rotationAngle)
+        createDrawingLayer(shapeLayer: shapeLayer, strokes: drawing.strokes, drawingBb: drawingBb, featureBb: featureBb, featureWidth: featureBb.width, featureHeight: eyeglassesHeight, color: color, rotationAngle: rotationAngle, verticalFlip: true)
     }
     
     static func drawEars(withPoints faceContourPoints: [CGPoint], onLayer shapeLayer: CAShapeLayer, withBb showFeatureBb: Bool = false) {
@@ -336,7 +355,7 @@ class FaceCustomization {
     var emotion = Emotion.Neutral
     var leftEyeClosed = false
     var rightEyeClosed = false
-    var hasEyeglasses = false
+    var hasEyeglasses = true
     var eyeColor = UIColor.black
     var noseColor = UIColor.black
     var mouthColor = UIColor.black
@@ -346,6 +365,9 @@ class FaceCustomization {
     var eyeglassesColor = UIColor.black
     
     func getColor(type: FeatureType) -> UIColor {
+        if (emotion == Emotion.Surprised) {
+            return UIColor(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: 1.0)
+        }
         switch(type) {
         case .LeftEye, .RightEye:
             return eyeColor

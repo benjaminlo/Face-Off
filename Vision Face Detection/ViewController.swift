@@ -197,7 +197,7 @@ extension ViewController {
                             if (collection?.count == 1) {
                                 let face = collection![0]
                                 if let emotion = face.attributes!.emotion.mostEmotion {
-                                    self.emotionLabel?.text = emotion
+                                    self.emotionLabel?.text = emotion == "surprise" ? "Mind Blown!" : emotion
                                     switch (emotion) {
                                     case "neutral":
                                         self.currentEmotion = Emotion.Neutral
