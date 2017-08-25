@@ -20,27 +20,62 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="neutral" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oqf-5Y-rKz" userLabel="EmotionLabel">
-                                <rect key="frame" x="30" y="50" width="74.5" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PJq-Yh-0s4">
-                                <rect key="frame" x="104" y="607" width="166" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                            </button>
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o8K-Uk-qPV" userLabel="LayersView">
+                                <rect key="frame" x="-0.5" y="-0.5" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VHw-3L-aFn" userLabel="ControlsView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PJq-Yh-0s4" userLabel="ViewFinderToggle">
+                                        <rect key="frame" x="17.5" y="597.5" width="166" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                        <state key="normal" title="ViewFinder"/>
+                                        <connections>
+                                            <action selector="toggleViewFinderWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DFx-3A-KP7"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ccY-6w-1a2" userLabel="AvatarToggle">
+                                        <rect key="frame" x="216.5" y="597.5" width="144" height="39"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                        <state key="normal" title="Avatar"/>
+                                        <connections>
+                                            <action selector="toggleAvatarWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="E9B-Gz-DMv"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="neutral" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oqf-5Y-rKz" userLabel="EmotionLabel">
+                                        <rect key="frame" x="135" y="30" width="103.5" height="42"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="35"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="oqf-5Y-rKz" firstAttribute="top" secondItem="VHw-3L-aFn" secondAttribute="top" constant="30" id="Gmc-Hu-FoF"/>
+                                    <constraint firstItem="oqf-5Y-rKz" firstAttribute="centerX" secondItem="VHw-3L-aFn" secondAttribute="centerX" id="sSO-fN-5zV"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="oqf-5Y-rKz" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="30" id="IUb-2q-GUU"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="oqf-5Y-rKz" secondAttribute="trailing" constant="30" id="P9Q-Di-O87"/>
-                            <constraint firstItem="oqf-5Y-rKz" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="kcu-5g-IVa"/>
+                            <constraint firstItem="o8K-Uk-qPV" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="8D6-WN-kx8"/>
+                            <constraint firstItem="VHw-3L-aFn" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="8zj-Wp-Hr1"/>
+                            <constraint firstItem="VHw-3L-aFn" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ANK-Dn-FyB"/>
+                            <constraint firstItem="o8K-Uk-qPV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="C1a-pf-r7J"/>
+                            <constraint firstItem="o8K-Uk-qPV" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="GdS-zg-n7P"/>
+                            <constraint firstItem="VHw-3L-aFn" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="MZU-lO-sgv"/>
+                            <constraint firstItem="o8K-Uk-qPV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="h62-4n-JIm"/>
+                            <constraint firstItem="VHw-3L-aFn" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="kjR-Md-4Jb"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="avatarToggleButton" destination="ccY-6w-1a2" id="INs-SO-jgd"/>
                         <outlet property="emotionLabel" destination="oqf-5Y-rKz" id="Jxv-de-al4"/>
+                        <outlet property="layersView" destination="o8K-Uk-qPV" id="uQZ-5T-O1U"/>
+                        <outlet property="viewFinderToggleButton" destination="PJq-Yh-0s4" id="iTy-sH-Tzx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
