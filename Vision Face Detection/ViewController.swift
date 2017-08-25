@@ -9,16 +9,21 @@
 import UIKit
 import AVFoundation
 import Vision
+import ProjectOxfordFace
 
 final class ViewController: UIViewController {
     var session: AVCaptureSession?
     let shapeLayer = CAShapeLayer()
+    @IBOutlet weak var emotionLabel: UILabel?
     
     let faceDetection = VNDetectFaceRectanglesRequest()
     let faceLandmarks = VNDetectFaceLandmarksRequest()
     let faceLandmarksDetectionRequest = VNSequenceRequestHandler()
     let faceDetectionRequest = VNSequenceRequestHandler()
+    let faceClient = MPOFaceServiceClient(endpointAndSubscriptionKey:"https://westcentralus.api.cognitive.microsoft.com/face/v1.0/", key: "1d692a4678fd49939f43e537185ff60e")
  
+    var frameCounter = 0
+    var emotionApiBusy = false;
     var currentEmotion = Emotion.Neutral;
     lazy var previewLayer: AVCaptureVideoPreviewLayer? = {
         guard let session = self.session else { return nil }
@@ -32,7 +37,7 @@ final class ViewController: UIViewController {
     lazy var classificationRequest: VNCoreMLRequest = {
         // Load the ML model through its generated class and create a Vision request for it.
         do {
-            let model = try VNCoreMLModel(for: FaceOff11().model)
+            let model = try VNCoreMLModel(for: FaceOff10().model)
             return VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
         } catch {
             fatalError("can't load Vision ML model: \(error)")
@@ -93,7 +98,8 @@ final class ViewController: UIViewController {
         super.viewDidAppear(animated)
         guard let previewLayer = previewLayer else { return }
         
-//        view.layer.addSublayer(previewLayer)
+        previewLayer.opacity = 0.5
+        view.layer.addSublayer(previewLayer)
         
         shapeLayer.strokeColor = UIColor.red.cgColor
         shapeLayer.lineWidth = 2.0
@@ -139,14 +145,14 @@ final class ViewController: UIViewController {
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-        
         let attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate)
         let ciImage = CIImage(cvImageBuffer: pixelBuffer!, options: attachments as! [String : Any]?)
         
         //leftMirrored for front camera
         let ciImageWithOrientation = ciImage.oriented(forExifOrientation: Int32(UIImageOrientation.leftMirrored.rawValue))
+        
+        frameCounter += 1
         
         detectFace(on: ciImageWithOrientation)
     }
@@ -159,10 +165,66 @@ extension ViewController {
             if !results.isEmpty {
                 faceLandmarks.inputFaceObservations = results
                 detectLandmarks(on: image)
+                if (frameCounter % 2 == 0 && !emotionApiBusy) {
+                    self.emotionApiBusy = true
+                    let startTime = Date()
+                    let uiImage = UIImage(ciImage: image)
+                    UIGraphicsBeginImageContextWithOptions(uiImage.size, false, uiImage.scale)
+                    defer { UIGraphicsEndImageContext() }
+                    uiImage.draw(in: CGRect(origin: .zero, size: uiImage.size))
+                    if let redraw = UIGraphicsGetImageFromCurrentImageContext() {
+                        let data = UIImageJPEGRepresentation(redraw, 1.0)
+                        let faceAttributes = [(MPOFaceAttributeTypeGender).rawValue, (MPOFaceAttributeTypeAge).rawValue, (MPOFaceAttributeTypeHair).rawValue, (MPOFaceAttributeTypeFacialHair).rawValue, (MPOFaceAttributeTypeMakeup).rawValue, (MPOFaceAttributeTypeEmotion).rawValue, (MPOFaceAttributeTypeOcclusion).rawValue, (MPOFaceAttributeTypeExposure).rawValue, (MPOFaceAttributeTypeHeadPose).rawValue, (MPOFaceAttributeTypeAccessories).rawValue]
+                        let faceArrayCompletionBlock = {(collection: Array<MPOFace>?, error: Error?) -> () in
+                            if (error != nil) {
+                                print(error.debugDescription)
+                                self.emotionApiBusy = false
+                                return
+                            }
+                            if (collection?.count == 1) {
+                                let face = collection![0]
+                                if let emotion = face.attributes!.emotion.mostEmotion {
+                                    self.emotionLabel?.text = emotion
+                                    switch (emotion) {
+                                    case "neutral":
+                                        self.currentEmotion = Emotion.Neutral
+                                        break
+                                    case "happiness":
+                                        self.currentEmotion = Emotion.Happy
+                                        break
+                                    case "sadness", "fear":
+                                        self.currentEmotion = Emotion.Sad
+                                        break
+                                    case "anger", "contempt", "disgust":
+                                        self.currentEmotion = Emotion.Angry
+                                        break
+                                    case "surprise":
+                                        self.currentEmotion = Emotion.Surprised
+                                    default:
+                                        break
+                                    }
+                                }
+                                DrawingManager.faceCustomization.hasEyeglasses = false
+                                for accessory in face.attributes.accessories.accessories {
+                                    var item = accessory as! [String : Any]
+                                    if let type = item["type"] as? String, let confidence = item["confidence"] as? Double {
+                                        DrawingManager.faceCustomization.hasEyeglasses = type == "glasses" && confidence > 0.5
+                                    }
+                                }
+                            }
+                            self.emotionApiBusy = false
+                        } as MPOFaceArrayCompletionBlock
+                        
+                        faceClient?.detect(with: data, returnFaceId: true, returnFaceLandmarks: true, returnFaceAttributes: faceAttributes, completionBlock: faceArrayCompletionBlock)
+                        
+                        print("Time taken: ")
+                        print(Date().timeIntervalSince(startTime))
+                    }
+                }
                 
                 let bb = results[0].boundingBox
                 let cropped = image.cropped(to: bb.scaled(to:image.extent.size))
-                classifyEmotion(on: cropped)
+                //classifyEmotion(on: cropped)
                 
                 DispatchQueue.main.async {
                     self.shapeLayer.sublayers?.removeAll()
@@ -172,14 +234,14 @@ extension ViewController {
     }
     
     func detectLandmarks(on image: CIImage) {
-        
         try? faceLandmarksDetectionRequest.perform([faceLandmarks], on: image)
         if let landmarksResults = faceLandmarks.results as? [VNFaceObservation] {
             for observation in landmarksResults {
                 DispatchQueue.main.async {
-                    DrawingManager.faceCustomization.emotion = self.currentEmotion;
                     if let boundingBox = self.faceLandmarks.inputFaceObservations?.first?.boundingBox {
                         let faceBoundingBox = boundingBox.scaled(to: self.view.bounds.size)
+                        
+                        DrawingManager.faceCustomization.emotion = self.currentEmotion;
                         
                         //different types of landmarks
                         let faceContour = observation.landmarks?.faceContour
@@ -239,7 +301,6 @@ extension ViewController {
         for i in 0...count {
             convertedPoints.append((CGFloat(points[i].x), CGFloat(points[i].y)))
         }
-        
         return convertedPoints
     }
     
@@ -277,8 +338,6 @@ extension ViewController {
             print(error)
         }
     }
-    
-
     
     func convertImage(image:UIImage) -> MLMultiArray? {
         let size = CGSize(width:48, height:48)

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		864E53E44A7E5303A9A6706A /* Pods_Vision_Face_Detection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81348311F2AE58D0CB105EBA /* Pods_Vision_Face_Detection.framework */; };
 		891CDCEF1F4162AD00EBF02B /* eyeglasses.json in Resources */ = {isa = PBXBuildFile; fileRef = 89FDF81A1F4161C300668DC1 /* eyeglasses.json */; };
 		8996C6001F38668C00EEFCD7 /* DrawingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8996C5FF1F38668C00EEFCD7 /* DrawingManager.swift */; };
 		8996C6091F39A0DA00EEFCD7 /* ear.json in Resources */ = {isa = PBXBuildFile; fileRef = 8996C6061F39A09F00EEFCD7 /* ear.json */; };
@@ -29,6 +30,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		237E50268AC55805F4D1BE8E /* Pods-Vision Face Detection.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vision Face Detection.release.xcconfig"; path = "Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection.release.xcconfig"; sourceTree = "<group>"; };
+		6215339392B29FC5D50AD2D9 /* Pods-Vision Face Detection.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vision Face Detection.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection.debug.xcconfig"; sourceTree = "<group>"; };
+		81348311F2AE58D0CB105EBA /* Pods_Vision_Face_Detection.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Vision_Face_Detection.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8996C5FF1F38668C00EEFCD7 /* DrawingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingManager.swift; sourceTree = "<group>"; };
 		8996C6051F39A09F00EEFCD7 /* mouth.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mouth.json; sourceTree = "<group>"; };
 		8996C6061F39A09F00EEFCD7 /* ear.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ear.json; sourceTree = "<group>"; };
@@ -37,11 +41,11 @@
 		89FDF80C1F3B502900668DC1 /* mouth-neutral.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-neutral.json"; sourceTree = "<group>"; };
 		89FDF8101F3B541500668DC1 /* mouth-happy-sad-angry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mouth-happy-sad-angry.json"; sourceTree = "<group>"; };
 		89FDF8141F3BF3AF00668DC1 /* eye-closed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "eye-closed.json"; sourceTree = "<group>"; };
+		89FDF81A1F4161C300668DC1 /* eyeglasses.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyeglasses.json; sourceTree = "<group>"; };
 		955B06261F3AED5D00663C24 /* UIImage+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Util.swift"; sourceTree = "<group>"; };
 		95D4EC751F3C328A004C3EB3 /* FaceOff9.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff9.mlmodel; sourceTree = "<group>"; };
 		95D4EC771F416C90004C3EB3 /* FaceOff10.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff10.mlmodel; sourceTree = "<group>"; };
 		95D4EC791F417360004C3EB3 /* FaceOff11.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceOff11.mlmodel; sourceTree = "<group>"; };
-		89FDF81A1F4161C300668DC1 /* eyeglasses.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = eyeglasses.json; sourceTree = "<group>"; };
 		E56B7E701EFD261E006704F3 /* CGRect+Scaled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Scaled.swift"; sourceTree = "<group>"; };
 		E5E2CD4F1EFA419000EBCCBF /* Vision Face Detection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vision Face Detection.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5E2CD521EFA419000EBCCBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -57,17 +61,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				864E53E44A7E5303A9A6706A /* Pods_Vision_Face_Detection.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF9D3BC434DF7F8FFD793033 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				81348311F2AE58D0CB105EBA /* Pods_Vision_Face_Detection.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E5E2CD461EFA419000EBCCBF = {
 			isa = PBXGroup;
 			children = (
 				E5E2CD511EFA419000EBCCBF /* Vision Face Detection */,
 				E5E2CD501EFA419000EBCCBF /* Products */,
+				FE3BAE4FF31AB4B76ECBA170 /* Pods */,
+				CF9D3BC434DF7F8FFD793033 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,6 +121,15 @@
 			path = "Vision Face Detection";
 			sourceTree = "<group>";
 		};
+		FE3BAE4FF31AB4B76ECBA170 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6215339392B29FC5D50AD2D9 /* Pods-Vision Face Detection.debug.xcconfig */,
+				237E50268AC55805F4D1BE8E /* Pods-Vision Face Detection.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -113,9 +137,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E5E2CD611EFA419000EBCCBF /* Build configuration list for PBXNativeTarget "Vision Face Detection" */;
 			buildPhases = (
+				C709B0BB5D2887EBDB47C426 /* [CP] Check Pods Manifest.lock */,
 				E5E2CD4B1EFA419000EBCCBF /* Sources */,
 				E5E2CD4C1EFA419000EBCCBF /* Frameworks */,
 				E5E2CD4D1EFA419000EBCCBF /* Resources */,
+				011622ABE9561CC0759279C5 /* [CP] Embed Pods Frameworks */,
+				CF6F9CF652141F43863C7D47 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -179,6 +206,60 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		011622ABE9561CC0759279C5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ProjectOxfordFace/ProjectOxfordFace.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProjectOxfordFace.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C709B0BB5D2887EBDB47C426 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Vision Face Detection-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CF6F9CF652141F43863C7D47 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Vision Face Detection/Pods-Vision Face Detection-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E5E2CD4B1EFA419000EBCCBF /* Sources */ = {
@@ -323,6 +404,7 @@
 		};
 		E5E2CD621EFA419000EBCCBF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6215339392B29FC5D50AD2D9 /* Pods-Vision Face Detection.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = UBF8T346G9;
@@ -331,12 +413,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.droidsonroids.Vision-Face-Detection";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		E5E2CD631EFA419000EBCCBF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 237E50268AC55805F4D1BE8E /* Pods-Vision Face Detection.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = UBF8T346G9;
@@ -345,7 +428,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.droidsonroids.Vision-Face-Detection";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
